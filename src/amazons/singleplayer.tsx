@@ -17,13 +17,11 @@ const App: any = Client({
   board: AmazonsBoard,
 });
 
-const Singleplayer = () => (
+export const Singleplayer = () => (
   <div style={{ padding: 50 }}>
     <App />
   </div>
 );
-
-export default Singleplayer;
 
 // import logo from "./logo.svg";
 // import styles from "./App.module.css";
