@@ -2,7 +2,7 @@ import { Singleplayer } from "./amazons/singleplayer";
 import { Router } from "solid-app-router";
 
 export const App = () => <Singleplayer />;
-//
+
 // import { Client } from "boardgame.io/client";
 // import { AmazonsGame } from "./amazons/game";
 

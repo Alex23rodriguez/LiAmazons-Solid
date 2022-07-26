@@ -8,19 +8,20 @@
 
 // import ChessBoard from './board';
 // import { Client } from "boardgame.io/client";
-import { Client } from "boardgame.io/react";
+import { Client } from "boardgame.io/client";
 import { AmazonsBoard } from "./board";
 import { AmazonsGame } from "./game";
 
-const App: any = Client({
-  game: AmazonsGame,
-  board: AmazonsBoard,
-});
+class AmazonsClient {
+  public client: any;
+  constructor() {
+    this.client = Client({ game: AmazonsGame });
+    this.client.start();
+  }
+}
 
 export const Singleplayer = () => (
-  <div style={{ padding: 50 }}>
-    <App />
-  </div>
+  <div style={{ padding: 50 }}>hello im Singleplayer</div>
 );
 
 // import logo from "./logo.svg";

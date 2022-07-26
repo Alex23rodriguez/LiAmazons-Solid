@@ -2,7 +2,7 @@ import { Amazons } from "amazons-game-engine";
 import { Move } from "amazons-game-engine/dist/types";
 import { Game } from "boardgame.io";
 
-let amazons = Amazons();
+let amazons = Amazons(6);
 // FOR DEBUGGING ONLY
 (window as any).amazons = amazons;
 
@@ -29,5 +29,9 @@ export const AmazonsGame: Game = {
   turn: {
     minMoves: 2,
     maxMoves: 2,
+  },
+
+  endIf: (G, ctx) => {
+    if (amazons.game_over()) return amazons.turn(true);
   },
 };
