@@ -1,3 +1,2 @@
-export const Multiplayer = () => {
-  return <div>Hello from Multiplayer</div>;
-};
+export const Multiplayer = (playerID?: string) => () =>
+  <div>Multiplayer {playerID}</div>;

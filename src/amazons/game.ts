@@ -24,6 +24,10 @@ export const AmazonsGame: Game = {
       amazons.move(m);
       return { fen: amazons.fen() };
     },
+    random_move: (G: any, ctx: any) => {
+      amazons.random_move();
+      return { fen: amazons.fen() };
+    },
   },
 
   turn: {

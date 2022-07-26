@@ -15,10 +15,12 @@ import { AmazonsGame } from "./game";
 class AmazonsClient {
   public client: any;
   constructor() {
-    this.client = Client({ game: AmazonsGame });
+    this.client = Client({ game: AmazonsGame, debug: true });
     this.client.start();
   }
 }
+
+const app = new AmazonsClient();
 
 export const Singleplayer = () => (
   <div style={{ padding: 50 }}>hello im Singleplayer</div>
