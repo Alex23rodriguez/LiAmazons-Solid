@@ -3,11 +3,10 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "bg": "parcel index.html --open",
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite build && vite preview"
   },
   "license": "MIT",
   "devDependencies": {
