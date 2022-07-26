@@ -15,10 +15,11 @@ import { AmazonsGame } from "./game";
 const AmazonsClient = () => {
   const client = Client({ game: AmazonsGame, debug: true });
   client.start();
+  (window as any).client = client;
 
-  const { ctx } = client.getState() as any;
+  const { ctx, G } = client.getState() as any;
 
-  return <AmazonsBoard ctx={ctx} moves={client.moves} other="234" />;
+  return <AmazonsBoard ctx={ctx} moves={client.moves} G={G} />;
 };
 
 export const Singleplayer = () => (

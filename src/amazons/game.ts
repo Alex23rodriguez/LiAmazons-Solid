@@ -1,32 +1,34 @@
-import { Amazons } from "amazons-game-engine";
-import { Move } from "amazons-game-engine/dist/types";
+import { Amazons, DEFAULT_POSITIONS } from "amazons-game-engine";
+import { FEN, Move } from "amazons-game-engine/dist/types";
 import { Game } from "boardgame.io";
-import { amazons } from "./game-state";
 
-// FOR DEBUGGING ONLY
-(window as any).amazons = amazons();
-
+function Load(fen: FEN) {
+  return Amazons(fen);
+}
 export const AmazonsGame: Game = {
   name: "amazons",
 
-  setup: () => ({ fen: amazons().fen() }),
+  setup: () => {
+    return { fen: DEFAULT_POSITIONS[6] };
+  },
 
   moves: {
     move: (G: any, ctx: any, m: Move) => {
-      // const amazons = Load(G.fen);
+      const amazons = Load(G.fen);
       if (
-        (amazons().turn() == "w" && ctx.currentPlayer == "1") ||
-        (amazons().turn() == "b" && ctx.currentPlayer == "0")
+        (amazons.turn() == "w" && ctx.currentPlayer == "1") ||
+        (amazons.turn() == "b" && ctx.currentPlayer == "0")
       ) {
         console.log("wrong player");
         return { ...G };
       }
-      amazons().move(m);
-      return { fen: amazons().fen() };
+      amazons.move(m);
+      return { fen: amazons.fen() };
     },
     random_move: (G: any, ctx: any) => {
-      amazons().random_move();
-      return { fen: amazons().fen() };
+      const amazons = Load(G.fen);
+      amazons.random_move();
+      return { fen: amazons.fen() };
     },
   },
 
@@ -36,6 +38,7 @@ export const AmazonsGame: Game = {
   },
 
   endIf: (G, ctx) => {
-    if (amazons().game_over()) return amazons().turn(true);
+    const amazons = Load(G.fen);
+    if (amazons.game_over()) return amazons.turn(true);
   },
 };

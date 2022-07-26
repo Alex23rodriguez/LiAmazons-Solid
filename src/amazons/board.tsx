@@ -1,11 +1,10 @@
 import { Amazons } from "amazons-game-engine";
 import { Coords } from "amazons-game-engine/dist/types";
-import { amazons } from "./game-state";
 
-export function AmazonsBoard({ ctx, moves }: any) {
+export function AmazonsBoard({ ctx, G, moves }: any) {
   const onClick = (coords: Coords) => moves.random_move();
 
-  let amz = amazons();
+  const amazons = Amazons(G.fen);
   let winner: any = "";
   if (ctx.gameover) {
     winner = <div id="winner">Winner: {ctx.gameover.winner}</div>;
@@ -19,7 +18,7 @@ export function AmazonsBoard({ ctx, moves }: any) {
     textAlign: "center",
   };
 
-  let { rows, cols } = amz.size();
+  let { rows, cols } = amazons.size();
   let tbody = [];
   for (let row = 0; row < rows; row++) {
     let cells = [];
