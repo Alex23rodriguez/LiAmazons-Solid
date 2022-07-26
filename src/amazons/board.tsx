@@ -1,7 +1,7 @@
-import { Amazons } from "amazons-game-engine";
-import { Coords } from "amazons-game-engine/dist/types";
+import { Amazons, square_to_coords } from "amazons-game-engine";
+import { Coords, Square } from "amazons-game-engine/dist/types";
 import { _ClientImpl } from "boardgame.io/dist/types/src/client/client";
-import { createSignal } from "solid-js";
+import { createMemo, createSignal } from "solid-js";
 
 export function AmazonsBoard({ client }: { client: _ClientImpl }) {
   const { moves } = client;
@@ -19,10 +19,13 @@ export function AmazonsBoard({ client }: { client: _ClientImpl }) {
   const onClick = (coords: Coords) => {
     moves.random_move();
     amazons.load(G().fen);
+    // amazons.move(G().last_move);
+    setPieces(amazons.pieces());
   };
 
   const amazons = Amazons(initG.fen);
   (window as any).amazons = amazons;
+  const [pieces, setPieces] = createSignal(amazons.pieces());
 
   const cellStyle = {
     border: "1px solid #555",
@@ -33,33 +36,48 @@ export function AmazonsBoard({ client }: { client: _ClientImpl }) {
   };
 
   let { rows, cols } = amazons.size();
-  let tbody = [];
-  for (let row = 0; row < rows; row++) {
-    let cells = [];
-    for (let col = 0; col < cols; col++) {
-      cells.push(
-        <td>
-          {false ? (
-            <div style={cellStyle}>{1}</div>
-          ) : (
+
+  const tbody = createMemo(() => {
+    let all_cells = [];
+    for (let row = 0; row < rows; row++) {
+      let cells = [];
+      for (let col = 0; col < cols; col++) {
+        cells.push(
+          <td>
             <button style={cellStyle} onClick={() => onClick({ row, col })} />
-          )}
-        </td>
-      );
+          </td>
+        );
+      }
+
+      all_cells.push(cells);
     }
-    tbody.push(<tr>{cells}</tr>);
-  }
+
+    // draw pieces
+    for (const [p, sqs] of Object.entries(pieces())) {
+      for (let sq of sqs) {
+        let { row, col } = square_to_coords(sq as Square, amazons.size());
+
+        all_cells[row][col] = (
+          <td>
+            <div style={cellStyle}>{p}</div>
+          </td>
+        );
+      }
+    }
+
+    let tbody = [];
+    for (const cells of all_cells) {
+      tbody.push(<tr>{cells}</tr>);
+    }
+    return tbody;
+  });
 
   return (
     <div>
       <table id="board">
         <tbody>{tbody}</tbody>
       </table>
-      {ctx().gameover ? (
-        <div id="winner">Winner: {amazons.turn(true)}</div>
-      ) : (
-        ""
-      )}
+      {ctx().gameover ? <div id="winner">Winner: {ctx().gameover}</div> : ""}
     </div>
   );
 }
