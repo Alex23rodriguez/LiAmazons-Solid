@@ -19,7 +19,6 @@ export const AmazonsGame: Game = {
         (amazons.turn() == "w" && ctx.currentPlayer == "1") ||
         (amazons.turn() == "b" && ctx.currentPlayer == "0")
       ) {
-        console.log("wrong player");
         return { ...G };
       }
       amazons.move(m);
@@ -27,7 +26,7 @@ export const AmazonsGame: Game = {
     },
     random_move: (G: any, ctx: any) => {
       const amazons = Load(G.fen);
-      amazons.random_move();
+      let move = amazons.random_move();
       return { fen: amazons.fen() };
     },
   },

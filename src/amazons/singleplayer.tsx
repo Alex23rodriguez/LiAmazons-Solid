@@ -19,7 +19,9 @@ const AmazonsClient = () => {
 
   const { ctx, G } = client.getState() as any;
 
-  return <AmazonsBoard ctx={ctx} moves={client.moves} G={G} />;
+  return (
+    <AmazonsBoard client={client}/>
+  );
 };
 
 export const Singleplayer = () => (
