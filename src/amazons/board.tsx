@@ -1,22 +1,14 @@
-export function AmazonsBoard({
-  ctx,
-  G,
-  moves,
-}: {
-  ctx: any;
-  G: any;
-  moves: any;
-}): any {
-  const onClick = (id: number) => moves.move(id);
+import { Amazons } from "amazons-game-engine";
+import { Coords } from "amazons-game-engine/dist/types";
+import { amazons } from "./game-state";
 
+export function AmazonsBoard({ ctx, moves }: any) {
+  const onClick = (coords: Coords) => moves.random_move();
+
+  let amz = amazons();
   let winner: any = "";
   if (ctx.gameover) {
-    winner =
-      ctx.gameover.winner !== undefined ? (
-        <div id="winner">Winner: {ctx.gameover.winner}</div>
-      ) : (
-        <div id="winner">Draw!</div>
-      );
+    winner = <div id="winner">Winner: {ctx.gameover.winner}</div>;
   }
 
   const cellStyle = {
@@ -27,17 +19,17 @@ export function AmazonsBoard({
     textAlign: "center",
   };
 
+  let { rows, cols } = amz.size();
   let tbody = [];
-  for (let i = 0; i < 3; i++) {
+  for (let row = 0; row < rows; row++) {
     let cells = [];
-    for (let j = 0; j < 3; j++) {
-      const id = 3 * i + j;
+    for (let col = 0; col < cols; col++) {
       cells.push(
         <td>
-          {G.cells[id] ? (
-            <div style={cellStyle}>{G.cells[id]}</div>
+          {false ? (
+            <div style={cellStyle}>{1}</div>
           ) : (
-            <button style={cellStyle} onClick={() => onClick(id)} />
+            <button style={cellStyle} onClick={() => onClick({ row, col })} />
           )}
         </td>
       );

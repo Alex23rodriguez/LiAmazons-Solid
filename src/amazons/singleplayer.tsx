@@ -12,19 +12,17 @@ import { Client } from "boardgame.io/client";
 import { AmazonsBoard } from "./board";
 import { AmazonsGame } from "./game";
 
-class AmazonsClient {
-  public client: any;
-  constructor() {
-    this.client = Client({ game: AmazonsGame, debug: true });
-    this.client.start();
-  }
-}
+const AmazonsClient = () => {
+  const client = Client({ game: AmazonsGame, debug: true });
+  client.start();
 
-const app = new AmazonsClient();
+  const { ctx } = client.getState() as any;
+
+  return <AmazonsBoard ctx={ctx} moves={client.moves} other="234" />;
+};
 
 export const Singleplayer = () => (
-  <div style={{ padding: 50 }}>hello im Singleplayer</div>
+  <div style={{ padding: 50 }}>
+    <AmazonsClient />
+  </div>
 );
-
-// import logo from "./logo.svg";
-// import styles from "./App.module.css";
