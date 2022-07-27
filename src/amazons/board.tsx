@@ -12,11 +12,11 @@ import { Square as TSquare } from "amazons-game-engine/dist/types";
 export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   // state
   const [turn, setTurn] = createSignal(0);
-  const [queens, setQueens] = createSignal<[number[], number[]]>([[], []]);
-  const [arrows, setArrows] = createSignal<number[]>([]);
-  const [selected, setSelected] = createSignal<number | null>(null);
-  const [canMove, setCanMove] = createSignal<number[]>([]);
-  const [highlight, setHighlight] = createSignal<number[]>([]);
+  const [queens, setQueens] = createSignal<[TSquare[], TSquare[]]>([[], []]);
+  const [arrows, setArrows] = createSignal<TSquare[]>([]);
+  const [selected, setSelected] = createSignal<TSquare | null>(null);
+  const [canMove, setCanMove] = createSignal<TSquare[]>([]);
+  const [highlight, setHighlight] = createSignal<TSquare[]>([]);
 
   let { G: initG, ctx: initCtx } = props.client.getState() as any;
 
@@ -53,60 +53,47 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     );
   }
 
-  function square_to_index(square: TSquare) {
-    let { row, col } = square_to_coords(square, size);
-    return row * size.cols + col;
-  }
-
   function callSetPieces() {
-    setQueens([
-      amazons.pieces()["w"].map(square_to_index),
-      amazons.pieces()["b"].map(square_to_index),
-    ]);
-    setArrows(amazons.pieces()["x"].map(square_to_index));
+    setQueens([amazons.pieces()["w"], amazons.pieces()["b"]]);
+    setArrows(amazons.pieces()["x"]);
   }
 
   callSetPieces();
 
-  let makeClickHandler = (i: number) => () => {
+  let makeClickHandler = (sq: TSquare) => () => {
     if (ctx().gameover) return;
 
-    let clicked_square = index_to_square(i);
-
     // TODO: choose based on amazons API
-    if (queens()[turn()].includes(i) && highlight().length !== 2) {
+    if (queens()[turn()].includes(sq) && highlight().length !== 2) {
       // click on queen
-      setSelected(i);
+      setSelected(sq);
 
-      let poss_squares = amazons.moves_dict()[clicked_square];
+      let poss_squares = amazons.moves_dict()[sq];
       if (typeof poss_squares === "undefined") setCanMove([]);
-      else setCanMove(poss_squares.map((sq) => square_to_index(sq)));
-      setHighlight([i]);
+      else setCanMove(poss_squares);
+      setHighlight([sq]);
       return;
     }
     // click on canMove
-    if (canMove().includes(i) && selected() !== null) {
+    if (canMove().includes(sq) && selected() !== null) {
       // update amazons
-      amazons.move([index_to_square(selected() as number), clicked_square]);
-      props.client.moves.move([
-        index_to_square(selected() as number),
-        clicked_square,
-      ]);
+      amazons.move([selected() as TSquare, sq]);
+      props.client.moves.move([selected() as TSquare, sq]);
       callSetPieces();
       // setQueens(qns);
-      setHighlight([selected() as number, i]);
+      setHighlight([selected() as TSquare, sq]);
       setSelected(null);
 
       let poss_squares = amazons.moves().flat();
-      setCanMove(poss_squares.map((sq) => square_to_index(sq as TSquare)));
+      setCanMove(poss_squares as TSquare[]);
 
       return;
     } // place arrow
-    if (canMove().includes(i) && selected() === null) {
+    if (canMove().includes(sq) && selected() === null) {
       let h = Array.from(highlight());
-      h.push(i);
-      amazons.move([clicked_square]);
-      props.client.moves.move([clicked_square]);
+      h.push(sq);
+      amazons.move([sq]);
+      props.client.moves.move([sq]);
       callSetPieces();
 
       // setArrows(arrows().concat(i));
@@ -120,18 +107,18 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   let square_height = `calc(80vw / ${cols})`;
   let squares = [];
   for (let i = 0; i < cols * rows; i++) {
-    let sq_name = index_to_square(i);
+    let sq = index_to_square(i);
     squares.push(
       <Square
         height={square_height}
         color={
-          (highlight().includes(i) ? "H" : "") +
-          (amazons.square_color(sq_name) === "light" ? 0 : 1)
+          (highlight().includes(sq) ? "H" : "") +
+          (amazons.square_color(sq) === "light" ? 0 : 1)
         }
-        queen={queens()[0].includes(i) ? 1 : queens()[1].includes(i) ? 2 : 0}
-        arrow={arrows().includes(i) ? true : false}
-        onClick={makeClickHandler(i)}
-        canMove={canMove().includes(i) ? true : false}
+        queen={queens()[0].includes(sq) ? 1 : queens()[1].includes(sq) ? 2 : 0}
+        arrow={arrows().includes(sq) ? true : false}
+        onClick={makeClickHandler(sq)}
+        canMove={canMove().includes(sq) ? true : false}
       />
     );
   }
