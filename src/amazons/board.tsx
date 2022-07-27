@@ -29,6 +29,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   createEffect(() => {
     let fen = G().fen;
     if (fen === amazons.fen()) {
+      updateMoves();
       updateSignals();
       return;
     }
@@ -57,14 +58,11 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   }
 
   function updateMoves() {
-    let sq = amazons.shooting_sq();
-    if (sq) return setCanMove(amazons.moves().flat() as TSquare[]);
+    // called whenever an update from G happens
+    if (amazons.shooting_sq())
+      return setCanMove(amazons.moves().flat() as TSquare[]);
 
-    let moves = amazons.moves_dict()[selected() as TSquare];
-    if (typeof moves === "undefined") return setCanMove([]);
-    return setCanMove(moves);
-
-    return setCanMove([]);
+    setCanMove([]);
   }
 
   function updateSignals() {
@@ -72,43 +70,45 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     setArrows(amazons.pieces()["x"]);
   }
 
-  let makeClickHandler = (sq: TSquare) => () => {
+  const makeClickHandler = (sq: TSquare) => () => {
     if (ctx().gameover) return;
 
-    // TODO: choose based on amazons API
-    if (queens()[amazons.turn()].includes(sq) && highlight().length !== 2) {
-      // click on queen
-      setSelected(sq);
+    if (amazons.shooting()) {
+      if (canMove().includes(sq)) {
+        // place an arrow
+        let h = Array.from(highlight());
+        h.push(sq);
+        amazons.move([sq]);
 
-      let poss_squares = amazons.moves_dict()[sq];
-      updateMoves();
+        props.client.moves.move([sq]);
+
+        setHighlight(h);
+      }
+      return;
+    }
+
+    if (queens()[amazons.turn()].includes(sq) && sq !== selected()) {
+      // select a queen
+      setSelected(sq);
+      const moves = amazons.moves_dict()[selected() as TSquare];
+      setCanMove(moves ? moves : []);
       setHighlight([sq]);
       return;
     }
-    // click on canMove
-    if (canMove().includes(sq) && selected() !== null) {
-      // update amazons
+    // move a queen
+    if (canMove().includes(sq)) {
       amazons.move([selected() as TSquare, sq]);
       props.client.moves.move([selected() as TSquare, sq]);
 
       setHighlight([selected() as TSquare, sq]);
-      setSelected(null);
+      setSelected(sq);
 
-      updateMoves();
-
-      return;
-    } // place arrow
-    if (canMove().includes(sq) && selected() === null) {
-      let h = Array.from(highlight());
-      h.push(sq);
-      amazons.move([sq]);
-
-      props.client.moves.move([sq]);
-
-      updateMoves();
-      setHighlight(h);
       return;
     }
+    setSelected(null);
+    setCanMove([]);
+    setHighlight([]);
+    return;
   };
 
   let square_height = `calc(80vw / ${cols})`;
