@@ -1,14 +1,21 @@
 import "./square.scss";
 
-import Queen from "./queen";
-import Arrow from "./arrow";
+import { Queen } from "./queen";
+import { Arrow } from "./arrow";
 
-const Square = (props) => {
+export const Square = (props: {
+  queen: number;
+  arrow: boolean;
+  height: string;
+  color: string;
+  canMove: boolean;
+  onClick: () => void;
+}) => {
   return (
     <div
       style={{ height: props.height }}
       class={`square color${props.color}`}
-      onClick={props.handleClick}
+      onClick={props.onClick}
     >
       {props.queen ? (
         <Queen team={`team${props.queen}`} />
@@ -21,5 +28,3 @@ const Square = (props) => {
     </div>
   );
 };
-
-export default Square;

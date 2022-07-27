@@ -1,4 +1,4 @@
-const Arrow = () => (
+export const Arrow = () => (
   <div class="container">
     <div
       class="inner-circle very-small"
@@ -6,5 +6,3 @@ const Arrow = () => (
     />
   </div>
 );
-
-export default Arrow;

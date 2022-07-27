@@ -1,4 +1,4 @@
-import Square from "./square";
+import { Square } from "./square";
 
 import { createSignal } from "solid-js";
 import {
@@ -6,32 +6,34 @@ import {
   coords_to_square,
   square_to_coords,
 } from "amazons-game-engine";
+import { _ClientImpl } from "boardgame.io/dist/types/src/client/client";
+import { Square as TSquare } from "amazons-game-engine/dist/types";
 
-export const AmazonsBoard = (props) => {
+export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   // state
   const [turn, setTurn] = createSignal(0);
-  const [queens, setQueens] = createSignal();
-  const [arrows, setArrows] = createSignal([]);
-  const [selected, setSelected] = createSignal();
-  const [canMove, setCanMove] = createSignal([]);
-  const [highlight, setHighlight] = createSignal([]);
+  const [queens, setQueens] = createSignal<[number[], number[]]>([[], []]);
+  const [arrows, setArrows] = createSignal<number[]>([]);
+  const [selected, setSelected] = createSignal<number | null>(null);
+  const [canMove, setCanMove] = createSignal<number[]>([]);
+  const [highlight, setHighlight] = createSignal<number[]>([]);
 
-  const amazons = Amazons(props.fen_or_size);
+  const amazons = Amazons();
 
   console.log("init board");
-  window.amazons = amazons;
+  (window as any).amazons = amazons;
 
   let size = amazons.size();
   const { rows, cols } = size;
 
-  function index_to_square(index) {
+  function index_to_square(index: number) {
     return coords_to_square(
       { row: Math.floor(index / size.cols), col: index % size.cols },
       size
     );
   }
 
-  function square_to_index(square) {
+  function square_to_index(square: TSquare) {
     let { row, col } = square_to_coords(square, size);
     return row * size.cols + col;
   }
@@ -45,7 +47,7 @@ export const AmazonsBoard = (props) => {
   }
   callSetPieces();
 
-  let makeClickHandler = (i) => () => {
+  let makeClickHandler = (i: number) => () => {
     let clicked_square = index_to_square(i);
 
     // TODO: choose based on amazons API
@@ -60,16 +62,18 @@ export const AmazonsBoard = (props) => {
       return;
     }
     // click on canMove
-    if (canMove().includes(i) && selected() !== undefined) {
+    if (canMove().includes(i) && selected() !== null) {
       // update amazons
-      amazons.move([index_to_square(selected()), clicked_square]);
+      amazons.move([index_to_square(selected() as number), clicked_square]);
       callSetPieces();
       // setQueens(qns);
-      setHighlight([selected(), i]);
-      setSelected(undefined);
+      setHighlight([selected() as number, i]);
+      setSelected(null);
 
-      let poss_squares = amazons.moves_dict();
-      setCanMove(Object.keys(poss_squares).map((sq) => square_to_index(sq)));
+      let poss_squares = amazons.moves().flat();
+      setCanMove(
+        Object.keys(poss_squares).map((sq) => square_to_index(sq as TSquare))
+      );
 
       return;
     } // place arrow
@@ -99,10 +103,9 @@ export const AmazonsBoard = (props) => {
           (highlight().includes(i) ? "H" : "") +
           (amazons.square_color(sq_name) === "light" ? 0 : 1)
         }
-        name={sq_name}
         queen={queens()[0].includes(i) ? 1 : queens()[1].includes(i) ? 2 : 0}
         arrow={arrows().includes(i) ? true : false}
-        handleClick={makeClickHandler(i)}
+        onClick={makeClickHandler(i)}
         canMove={canMove().includes(i) ? true : false}
       />
     );
