@@ -1,18 +1,16 @@
 import { Square } from "./square";
 
 import { createEffect, createSignal } from "solid-js";
-import {
-  Amazons,
-  coords_to_square,
-  square_to_coords,
-} from "amazons-game-engine";
+import { Amazons, coords_to_square } from "amazons-game-engine";
 import { _ClientImpl } from "boardgame.io/dist/types/src/client/client";
 import { Square as TSquare } from "amazons-game-engine/dist/types";
 
 export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   // state
-  const [turn, setTurn] = createSignal(0);
-  const [queens, setQueens] = createSignal<[TSquare[], TSquare[]]>([[], []]);
+  const [queens, setQueens] = createSignal<{ w: TSquare[]; b: TSquare[] }>({
+    w: [],
+    b: [],
+  });
   const [arrows, setArrows] = createSignal<TSquare[]>([]);
   const [selected, setSelected] = createSignal<TSquare | null>(null);
   const [canMove, setCanMove] = createSignal<TSquare[]>([]);
@@ -27,14 +25,14 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   let size = amazons.size();
   let { rows, cols } = size;
 
+  (window as any).canMove = canMove;
   createEffect(() => {
     let fen = G().fen;
     if (fen === amazons.fen()) return;
     amazons = Amazons(fen);
     size = amazons.size();
     ({ rows, cols } = size);
-
-    callSetPieces();
+    updateSignals();
   });
 
   props.client.subscribe((state) => {
@@ -53,18 +51,18 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     );
   }
 
-  function callSetPieces() {
-    setQueens([amazons.pieces()["w"], amazons.pieces()["b"]]);
+  function updateSignals() {
+    setQueens({ w: amazons.pieces()["w"], b: amazons.pieces()["b"] });
     setArrows(amazons.pieces()["x"]);
   }
 
-  callSetPieces();
+  updateSignals();
 
   let makeClickHandler = (sq: TSquare) => () => {
     if (ctx().gameover) return;
 
     // TODO: choose based on amazons API
-    if (queens()[turn()].includes(sq) && highlight().length !== 2) {
+    if (queens()[amazons.turn()].includes(sq) && highlight().length !== 2) {
       // click on queen
       setSelected(sq);
 
@@ -78,9 +76,11 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     if (canMove().includes(sq) && selected() !== null) {
       // update amazons
       amazons.move([selected() as TSquare, sq]);
+
       props.client.moves.move([selected() as TSquare, sq]);
-      callSetPieces();
-      // setQueens(qns);
+
+      updateSignals();
+
       setHighlight([selected() as TSquare, sq]);
       setSelected(null);
 
@@ -93,12 +93,12 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
       let h = Array.from(highlight());
       h.push(sq);
       amazons.move([sq]);
-      props.client.moves.move([sq]);
-      callSetPieces();
 
-      // setArrows(arrows().concat(i));
+      props.client.moves.move([sq]);
+
+      updateSignals();
+
       setCanMove([]);
-      setTurn(1 - turn());
       setHighlight(h);
       return;
     }
@@ -115,7 +115,9 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
           (highlight().includes(sq) ? "H" : "") +
           (amazons.square_color(sq) === "light" ? 0 : 1)
         }
-        queen={queens()[0].includes(sq) ? 1 : queens()[1].includes(sq) ? 2 : 0}
+        queen={
+          queens()["w"].includes(sq) ? 1 : queens()["b"].includes(sq) ? 2 : 0
+        }
         arrow={arrows().includes(sq) ? true : false}
         onClick={makeClickHandler(sq)}
         canMove={canMove().includes(sq) ? true : false}
