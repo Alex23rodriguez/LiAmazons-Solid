@@ -71,13 +71,11 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
       setSelected(null);
 
       let poss_squares = amazons.moves().flat();
-      setCanMove(
-        Object.keys(poss_squares).map((sq) => square_to_index(sq as TSquare))
-      );
+      setCanMove(poss_squares.map((sq) => square_to_index(sq as TSquare)));
 
       return;
     } // place arrow
-    if (canMove().includes(i) && selected() === undefined) {
+    if (canMove().includes(i) && selected() === null) {
       let h = Array.from(highlight());
       h.push(i);
       amazons.move([clicked_square]);
