@@ -24,15 +24,20 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   let amazons = Amazons(G().fen);
   let size = amazons.size();
   let { rows, cols } = size;
+  (window as any).amz = amazons;
 
-  (window as any).canMove = canMove;
   createEffect(() => {
     let fen = G().fen;
-    if (fen === amazons.fen()) return;
+    if (fen === amazons.fen()) {
+      updateSignals();
+      return;
+    }
     amazons = Amazons(fen);
     size = amazons.size();
     ({ rows, cols } = size);
     updateSignals();
+    updateMoves();
+    (window as any).amz = amazons;
   });
 
   props.client.subscribe((state) => {
@@ -51,12 +56,21 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     );
   }
 
+  function updateMoves() {
+    let sq = amazons.shooting_sq();
+    if (sq) return setCanMove(amazons.moves().flat() as TSquare[]);
+
+    let moves = amazons.moves_dict()[selected() as TSquare];
+    if (typeof moves === "undefined") return setCanMove([]);
+    return setCanMove(moves);
+
+    return setCanMove([]);
+  }
+
   function updateSignals() {
     setQueens({ w: amazons.pieces()["w"], b: amazons.pieces()["b"] });
     setArrows(amazons.pieces()["x"]);
   }
-
-  updateSignals();
 
   let makeClickHandler = (sq: TSquare) => () => {
     if (ctx().gameover) return;
@@ -67,8 +81,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
       setSelected(sq);
 
       let poss_squares = amazons.moves_dict()[sq];
-      if (typeof poss_squares === "undefined") setCanMove([]);
-      else setCanMove(poss_squares);
+      updateMoves();
       setHighlight([sq]);
       return;
     }
@@ -76,16 +89,12 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     if (canMove().includes(sq) && selected() !== null) {
       // update amazons
       amazons.move([selected() as TSquare, sq]);
-
       props.client.moves.move([selected() as TSquare, sq]);
-
-      updateSignals();
 
       setHighlight([selected() as TSquare, sq]);
       setSelected(null);
 
-      let poss_squares = amazons.moves().flat();
-      setCanMove(poss_squares as TSquare[]);
+      updateMoves();
 
       return;
     } // place arrow
@@ -96,9 +105,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
 
       props.client.moves.move([sq]);
 
-      updateSignals();
-
-      setCanMove([]);
+      updateMoves();
       setHighlight(h);
       return;
     }
