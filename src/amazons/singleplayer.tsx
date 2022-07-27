@@ -17,11 +17,7 @@ const AmazonsClient = () => {
   client.start();
   (window as any).client = client;
 
-  const { ctx, G } = client.getState() as any;
-
-  return (
-    <AmazonsBoard client={client}/>
-  );
+  return <AmazonsBoard client={client} />;
 };
 
 export const Singleplayer = () => (
