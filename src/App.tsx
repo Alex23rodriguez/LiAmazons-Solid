@@ -1,4 +1,4 @@
-import DnD from "./dnd/conditional-drop";
+import DnD from "./dnd/drag-handle";
 
 export const App = DnD;
 // export const App = () => <Singleplayer />;
