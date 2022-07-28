@@ -1,4 +1,4 @@
-import DnD from "./dnd/drag-and-drop";
+import DnD from "./dnd/drag-overlay";
 
 export const App = DnD;
 // export const App = () => <Singleplayer />;
