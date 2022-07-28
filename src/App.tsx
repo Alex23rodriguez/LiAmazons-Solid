@@ -1,4 +1,4 @@
-import DnD from "./dnd/drag-handle";
+import DnD from "./dnd/vertical-list";
 
 export const App = DnD;
 // export const App = () => <Singleplayer />;
