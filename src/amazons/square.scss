@@ -1,22 +1,8 @@
-$size-board: 10;
-
 .square {
   //   border: 1px solid black;
   // min-width: 80vh / $size-board;
   // min-height: 80vh / $size-board;
   position: relative;
-}
-
-.inner-square {
-  border: 1px solid black;
-
-  height: 80%;
-  width: 80%;
-
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 .color0 {
