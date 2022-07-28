@@ -1,7 +1,8 @@
 import "./square.scss";
 
-import { Queen } from "./queen";
-import { Arrow } from "./arrow";
+import { Queen } from "./tokens/queen";
+import { Movable } from "./tokens/movable";
+import { Arrow } from "./tokens/arrow";
 import { JSX } from "solid-js/jsx-runtime";
 import { Show } from "solid-js";
 
@@ -9,7 +10,7 @@ const tokens: { [token: string]: () => JSX.Element } = {
   w: () => <Queen team="w" />,
   b: () => <Queen team="b" />,
   x: () => <Arrow />,
-  m: () => <div class="inner-square" />,
+  m: () => <Movable/>,
 };
 
 export const Square = (props: {
