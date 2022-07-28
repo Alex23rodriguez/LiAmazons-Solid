@@ -1,4 +1,4 @@
-import DnD from "./dnd/vertical-list";
+import DnD from "./dnd/horizontal-list";
 
 export const App = DnD;
 // export const App = () => <Singleplayer />;
