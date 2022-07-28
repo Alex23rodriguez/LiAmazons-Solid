@@ -1,7 +1,7 @@
-import { Singleplayer } from "./amazons/singleplayer";
-import { Router } from "solid-app-router";
+import DnD from "./dnd/drag-and-drop";
 
-export const App = () => <Singleplayer />;
+export const App = DnD;
+// export const App = () => <Singleplayer />;
 
 // import { Client } from "boardgame.io/client";
 // import { AmazonsGame } from "./amazons/game";
