@@ -122,12 +122,18 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
           (highlight().includes(sq) ? "H" : "") +
           (amazons.square_color(sq) === "light" ? 0 : 1)
         }
-        queen={
-          queens()["w"].includes(sq) ? 1 : queens()["b"].includes(sq) ? 2 : 0
+        token={
+          queens()["w"].includes(sq)
+            ? "w"
+            : queens()["b"].includes(sq)
+            ? "b"
+            : arrows().includes(sq)
+            ? "x"
+            : canMove().includes(sq)
+            ? "m"
+            : undefined
         }
-        arrow={arrows().includes(sq) ? true : false}
         onClick={makeClickHandler(sq)}
-        canMove={canMove().includes(sq) ? true : false}
       />
     );
   }
