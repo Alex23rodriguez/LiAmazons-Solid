@@ -72,7 +72,6 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   }
 
   const makeClickHandler = (sq: TSquare) => () => {
-    console.log(sq);
     if (ctx().gameover) return;
 
     if (amazons.shooting()) {

@@ -22,23 +22,20 @@ export const Square = (props: {
   color: string;
   onClick: () => void;
 }) => {
-  // console.log(props.token)
-  const other_props = {
-    style: { height: props.height },
-    onMouseDown: props.onClick,
-  };
-
   return (
-    <div>
+    <div
+      onMouseDown={props.onClick}
+      style={{ height: props.height }}
+      class={`square color${props.color}`}
+    >
+      <Show when={props.token}>{tokens[props.token as string]()}</Show>
       <Droppable
-        type={props.token || "b"}
-        class={`square color${props.color}`}
-        classAccept="movable"
-        classReject="notmovable"
-        other_div_props={other_props}
-      >
-        <Show when={props.token}>{tokens[props.token as string]()}</Show>
-      </Droppable>
+        type={props.token}
+        class="fullsize"
+        other_div_props={{ id: "d" + props.name }}
+        classAccept="draggable"
+        classReject="not-draggable"
+      ></Droppable>
     </div>
   );
 };

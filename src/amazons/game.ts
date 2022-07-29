@@ -9,9 +9,9 @@ export const AmazonsGame: Game = {
   name: "amazons",
 
   setup: () => {
-    // return { fen: DEFAULT_POSITIONS[6], last_move: null };
+    return { fen: DEFAULT_POSITIONS[6], last_move: null };
     // return { fen: DEFAULT_POSITIONS[10], last_move: null };
-    return { fen: "2/wb w - 1", last_move: null };
+    // return { fen: "2/wb w - 1", last_move: null };
   },
 
   moves: {

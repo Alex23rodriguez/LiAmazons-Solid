@@ -2,6 +2,10 @@ import { Singleplayer } from "./amazons/singleplayer";
 
 export const App = () => <Singleplayer />;
 
+// import DnD from "./dnd/dnd-example";
+
+// export const App = DnD;
+
 // import { Client } from "boardgame.io/client";
 // import { AmazonsGame } from "./amazons/game";
 
