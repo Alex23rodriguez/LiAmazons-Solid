@@ -21,6 +21,7 @@ export const Draggable: ParentComponent<{
   type: any;
   class?: string;
 }> = (props) => {
+  // console.log(draggable_id, props.type);
   const draggable = createDraggable(draggable_id++, { type: props.type });
   return (
     <div use:draggable class={props.class}>
@@ -29,28 +30,42 @@ export const Draggable: ParentComponent<{
   );
 };
 
+let droppable_id = 0;
+
 export const Droppable: ParentComponent<{
-  id: string | number;
-  type: any;
+  type: string;
+  other_div_props?: object;
   class?: string;
   classAccept?: string;
   classReject?: string;
 }> = (props) => {
-  const droppable = createDroppable(props.id, { type: props.type });
+  const droppable = createDroppable(droppable_id++, { type: props.type });
 
   const [, { activeDraggable }] = useDragDropContext()!;
 
   const activeClass = () => {
+    // console.log("mytype", props.type);
+    // console.log("activeDraggable", activeDraggable()?.data.type);
+    // debugger;
+    let ans;
     if (droppable.isActiveDroppable) {
-      if (activeDraggable()!.data.type === props.type) {
-        return props.classAccept;
+      let actDrg = activeDraggable();
+      if (actDrg!.data.type === props.type) {
+        ans = props.classAccept;
       } else {
-        return props.classReject;
+        ans = props.classReject;
       }
     }
+    // console.log(ans);
+    return ans;
   };
+
   return (
-    <div use:droppable class={`${props.class || ""} ${activeClass() || ""}`}>
+    <div
+      use:droppable
+      {...props.other_div_props}
+      class={`${props.class || ""} ${activeClass() || ""}`}
+    >
       {props.children}
     </div>
   );

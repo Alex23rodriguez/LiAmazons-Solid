@@ -72,6 +72,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   }
 
   const makeClickHandler = (sq: TSquare) => () => {
+    console.log(sq);
     if (ctx().gameover) return;
 
     if (amazons.shooting()) {
@@ -119,6 +120,8 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     squares.push(sq);
   }
 
+  (window as any).sq = [];
+
   return (
     <DragDropProvider>
       <DragDropSensors />
@@ -129,27 +132,32 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
         }}
       >
         <For each={squares}>
-          {(sq) => (
-            <Square
-              height={square_height}
-              color={
-                (highlight().includes(sq) ? "H" : "") +
-                (amazons.square_color(sq) === "light" ? 0 : 1)
-              }
-              token={
-                queens()["w"].includes(sq)
-                  ? "w"
-                  : queens()["b"].includes(sq)
-                  ? "b"
-                  : arrows().includes(sq)
-                  ? "x"
-                  : canMove().includes(sq)
-                  ? "m"
-                  : undefined
-              }
-              onClick={makeClickHandler(sq)}
-            />
-          )}
+          {(sq) => {
+            let square = (
+              <Square
+                name={sq}
+                height={square_height}
+                color={
+                  (highlight().includes(sq) ? "H" : "") +
+                  (amazons.square_color(sq) === "light" ? 0 : 1)
+                }
+                token={
+                  queens()["w"].includes(sq)
+                    ? "w"
+                    : queens()["b"].includes(sq)
+                    ? "b"
+                    : arrows().includes(sq)
+                    ? "x"
+                    : canMove().includes(sq)
+                    ? "m"
+                    : undefined
+                }
+                onClick={makeClickHandler(sq)}
+              />
+            );
+            (window as any).sq.push(square);
+            return square;
+          }}
         </For>
       </div>
     </DragDropProvider>
