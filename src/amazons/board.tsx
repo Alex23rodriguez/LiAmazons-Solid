@@ -124,7 +124,11 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   (window as any).sq = [];
 
   return (
-    <DragDropProvider>
+    <DragDropProvider
+      onDragEnd={() => {
+        console.log("drag ended");
+      }}
+    >
       <DragDropSensors />
       <div
         id="board"
@@ -135,32 +139,28 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
         }}
       >
         <For each={squares}>
-          {(sq) => {
-            let square = (
-              <Square
-                name={sq}
-                height={square_height}
-                color={
-                  (highlight().includes(sq) ? "H" : "") +
-                  (amazons.square_color(sq) === "light" ? 0 : 1)
-                }
-                token={
-                  queens()["w"].includes(sq)
-                    ? "w"
-                    : queens()["b"].includes(sq)
-                    ? "b"
-                    : arrows().includes(sq)
-                    ? "x"
-                    : canMove().includes(sq)
-                    ? "m"
-                    : undefined
-                }
-                onClick={makeClickHandler(sq)}
-              />
-            );
-            (window as any).sq.push(square);
-            return square;
-          }}
+          {(sq) => (
+            <Square
+              name={sq}
+              height={square_height}
+              color={
+                (highlight().includes(sq) ? "H" : "") +
+                (amazons.square_color(sq) === "light" ? 0 : 1)
+              }
+              token={
+                queens()["w"].includes(sq)
+                  ? "w"
+                  : queens()["b"].includes(sq)
+                  ? "b"
+                  : arrows().includes(sq)
+                  ? "x"
+                  : canMove().includes(sq)
+                  ? "m"
+                  : undefined
+              }
+              onClick={makeClickHandler(sq)}
+            />
+          )}
         </For>
       </div>
     </DragDropProvider>

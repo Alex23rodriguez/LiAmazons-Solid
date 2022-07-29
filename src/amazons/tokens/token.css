@@ -16,6 +16,14 @@
   transform: translate(-50%, -50%);
 }
 
+.invisible {
+  border: none;
+}
+
+.inactive {
+  visibility: hidden;
+}
+
 .large {
   height: 80%;
   width: 80%;

@@ -1,6 +1,7 @@
 import {
   createDraggable,
   createDroppable,
+  transformStyle,
   useDragDropContext,
 } from "@thisbeyond/solid-dnd";
 import { ParentComponent } from "solid-js";
@@ -20,14 +21,31 @@ export const Draggable: ParentComponent<{
   // id: string | number;
   type: any;
   class?: string;
+  active: boolean;
 }> = (props) => {
   // console.log(draggable_id, props.type);
-  const draggable = createDraggable(draggable_id++, { type: props.type });
+  const draggable = createDraggable(draggable_id++, {
+    type: props.type,
+  });
+
   return (
-    <div use:draggable class={props.class}>
+    <div
+      class={props.class}
+      ref={draggable.ref}
+      style={transformStyle(draggable.transform)}
+    >
+      <div
+        class="inner-circle large invisible"
+        style={{ "z-index": 2 }}
+        {...draggable.dragActivators}
+        classList={{ inactive: !props.active }}
+      />
       {props.children}
     </div>
   );
+  /* <div use:draggable class={props.class}> */
+  // {props.children}
+  // </div>
 };
 
 let droppable_id = 0;

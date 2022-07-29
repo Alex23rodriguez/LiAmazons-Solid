@@ -9,8 +9,8 @@ import { Show } from "solid-js";
 import { Droppable } from "../dnd/dnd";
 
 const tokens: { [token: string]: () => JSX.Element } = {
-  w: () => <Queen team="w" />,
-  b: () => <Queen team="b" />,
+  w: () => <Queen team="w" active />,
+  b: () => <Queen team="b" active={false} />,
   x: () => <Arrow />,
   m: () => <Movable />,
 };
@@ -30,7 +30,7 @@ export const Square = (props: {
     >
       <Show when={props.token}>{tokens[props.token as string]()}</Show>
       <Droppable
-        type={props.token}
+        type={props.token || ""}
         class="fullsize"
         other_div_props={{ id: "d" + props.name }}
         classAccept="draggable"
