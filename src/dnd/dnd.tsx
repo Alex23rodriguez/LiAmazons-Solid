@@ -17,14 +17,20 @@ declare module "solid-js" {
   }
 }
 
-const Droppable = (props) => {
-const Draggable: ParentComponent<{ id: string | number; type: any }> = (
-  props
-) => {
+const Draggable: ParentComponent<{
+  id: string | number;
+  type: any;
+  class?: string;
+  classList?:
+    | {
+        [k: string]: boolean | undefined;
+      }
+    | undefined;
+}> = (props) => {
   const draggable = createDraggable(props.id, { type: props.type });
   return (
-    <div use:draggable class="draggable">
-      {`Draggable type '${props.type}'`}
+    <div use:draggable class={props.class} classList={props.classList}>
+      {props.children}
     </div>
   );
 };
@@ -71,8 +77,12 @@ export const ConditionalDropExample = () => {
     <DragDropProvider onDragEnd={onDragEnd}>
       <DragDropSensors />
       <div ref={ref} class="min-h-15 flex flex-wrap gap-5 justify-center">
-        <Draggable id={1} type="a" />
-        <Draggable id={2} type="b" />
+        <Draggable id={1} type="a" class="draggable">
+          {"Draggable type 'a'"}
+        </Draggable>
+        <Draggable id={2} type="b" class="draggable">
+          {"Draggable type 'b'"}
+        </Draggable>
       </div>
       <Droppable id={1} type="a" />
       <Droppable id={2} type="b" />
