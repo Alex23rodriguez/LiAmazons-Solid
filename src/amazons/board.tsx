@@ -1,9 +1,10 @@
 import { Square } from "./square";
 
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createSignal, For } from "solid-js";
 import { Amazons, coords_to_square } from "amazons-game-engine";
 import { _ClientImpl } from "boardgame.io/dist/types/src/client/client";
 import { Square as TSquare } from "amazons-game-engine/dist/types";
+import { DragDropProvider, DragDropSensors } from "@thisbeyond/solid-dnd";
 
 export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   // state
@@ -112,40 +113,45 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   };
 
   let square_height = `calc(80vw / ${cols})`;
-  let squares = [];
+  let squares: TSquare[] = [];
   for (let i = 0; i < cols * rows; i++) {
     let sq = index_to_square(i);
-    squares.push(
-      <Square
-        height={square_height}
-        color={
-          (highlight().includes(sq) ? "H" : "") +
-          (amazons.square_color(sq) === "light" ? 0 : 1)
-        }
-        token={
-          queens()["w"].includes(sq)
-            ? "w"
-            : queens()["b"].includes(sq)
-            ? "b"
-            : arrows().includes(sq)
-            ? "x"
-            : canMove().includes(sq)
-            ? "m"
-            : undefined
-        }
-        onClick={makeClickHandler(sq)}
-      />
-    );
+    squares.push(sq);
   }
 
   return (
-    <div
-      style={{
-        display: "grid",
-        "grid-template-columns": `repeat(${cols}, ${square_height})`,
-      }}
-    >
-      {squares}
-    </div>
+    <DragDropProvider>
+      <DragDropSensors />
+      <div
+        style={{
+          display: "grid",
+          "grid-template-columns": `repeat(${cols}, ${square_height})`,
+        }}
+      >
+        <For each={squares}>
+          {(sq) => (
+            <Square
+              height={square_height}
+              color={
+                (highlight().includes(sq) ? "H" : "") +
+                (amazons.square_color(sq) === "light" ? 0 : 1)
+              }
+              token={
+                queens()["w"].includes(sq)
+                  ? "w"
+                  : queens()["b"].includes(sq)
+                  ? "b"
+                  : arrows().includes(sq)
+                  ? "x"
+                  : canMove().includes(sq)
+                  ? "m"
+                  : undefined
+              }
+              onClick={makeClickHandler(sq)}
+            />
+          )}
+        </For>
+      </div>
+    </DragDropProvider>
   );
 };

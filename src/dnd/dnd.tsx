@@ -14,12 +14,14 @@ declare module "solid-js" {
   }
 }
 
+let draggable_id = 0;
+
 export const Draggable: ParentComponent<{
-  id: string | number;
+  // id: string | number;
   type: any;
   class?: string;
 }> = (props) => {
-  const draggable = createDraggable(props.id, { type: props.type });
+  const draggable = createDraggable(draggable_id++, { type: props.type });
   return (
     <div use:draggable class={props.class}>
       {props.children}
