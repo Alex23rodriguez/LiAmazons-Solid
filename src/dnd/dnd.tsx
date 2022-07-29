@@ -7,7 +7,7 @@ import {
   createDroppable,
   DragEventHandler,
 } from "@thisbeyond/solid-dnd";
-import { Component, ParentComponent } from "solid-js";
+import { ParentComponent } from "solid-js";
 
 declare module "solid-js" {
   namespace JSX {
@@ -22,21 +22,22 @@ const Draggable: ParentComponent<{
   id: string | number;
   type: any;
   class?: string;
-  classList?:
-    | {
-        [k: string]: boolean | undefined;
-      }
-    | undefined;
 }> = (props) => {
   const draggable = createDraggable(props.id, { type: props.type });
   return (
-    <div use:draggable class={props.class} classList={props.classList}>
+    <div use:draggable class={props.class}>
       {props.children}
     </div>
   );
 };
 
-const Droppable: Component<{ id: string | number; type: any }> = (props) => {
+const Droppable: ParentComponent<{
+  id: string | number;
+  type: any;
+  class?: string;
+  classAccept?: string;
+  classReject?: string;
+}> = (props) => {
   const droppable = createDroppable(props.id, { type: props.type });
 
   const [, { activeDraggable }] = useDragDropContext()!;
@@ -44,19 +45,16 @@ const Droppable: Component<{ id: string | number; type: any }> = (props) => {
   const activeClass = () => {
     if (droppable.isActiveDroppable) {
       if (activeDraggable()!.data.type === props.type) {
-        return "!droppable-accept";
+        return props.classAccept;
       } else {
-        return "!droppable-reject";
+        return props.classReject;
       }
     }
-    return ""; // class empty
   };
 
   return (
-    <div use:droppable class={`droppable ${activeClass()}`}>
-      Droppable
-      <br />
-      {`accepts type '${props.type}'`}
+    <div use:droppable class={`${props.class || ""} ${activeClass() || ""}`}>
+      {props.children}
     </div>
   );
 };
@@ -88,8 +86,28 @@ export const ConditionalDropExample = () => {
           {"Draggable type 'b'"}
         </Draggable>
       </div>
-      <Droppable id={1} type="a" />
-      <Droppable id={2} type="b" />
+      <Droppable
+        id={1}
+        type="a"
+        class="droppable"
+        classAccept="!droppable-accept"
+        classReject="!droppable-reject"
+      >
+        Droppable
+        <br />
+        {`accepts type 'a'`}
+      </Droppable>
+      <Droppable
+        id={2}
+        type="b"
+        class="droppable"
+        classAccept="!droppable-accept"
+        classReject="!droppable-reject"
+      >
+        Droppable too
+        <br />
+        {`accepts type 'b'`}
+      </Droppable>
     </DragDropProvider>
   );
 };
