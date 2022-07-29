@@ -7,7 +7,7 @@ import {
   createDroppable,
   DragEventHandler,
 } from "@thisbeyond/solid-dnd";
-import { Component, ParentComponent, Ref } from "solid-js";
+import { Component, ParentComponent } from "solid-js";
 
 declare module "solid-js" {
   namespace JSX {
@@ -49,7 +49,7 @@ const Droppable: Component<{ id: string | number; type: any }> = (props) => {
         return "!droppable-reject";
       }
     }
-    return "";
+    return ""; // class empty
   };
 
   return (
@@ -62,7 +62,7 @@ const Droppable: Component<{ id: string | number; type: any }> = (props) => {
 };
 
 export const ConditionalDropExample = () => {
-  let startPos: Ref<any>;
+  let startRegion: HTMLDivElement;
 
   const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
     if (droppable) {
@@ -70,14 +70,17 @@ export const ConditionalDropExample = () => {
         droppable.node.append(draggable.node);
       }
     } else {
-      startPos.append(draggable.node);
+      startRegion.append(draggable.node);
     }
   };
 
   return (
     <DragDropProvider onDragEnd={onDragEnd}>
       <DragDropSensors />
-      <div ref={startPos} class="min-h-15 flex flex-wrap gap-5 justify-center">
+      <div
+        ref={startRegion!}
+        class="min-h-15 flex flex-wrap gap-5 justify-center"
+      >
         <Draggable id={1} type="a" class="draggable">
           {"Draggable type 'a'"}
         </Draggable>
