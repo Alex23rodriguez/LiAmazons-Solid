@@ -15,6 +15,14 @@ const Draggable = (props) => {
     </div>
   );
 };
+declare module "solid-js" {
+  namespace JSX {
+    interface Directives {
+      draggable: boolean;
+      droppable: boolean;
+    }
+  }
+}
 
 const Droppable = (props) => {
   const droppable = createDroppable(props.id, { type: props.type });
