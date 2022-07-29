@@ -1,3 +1,5 @@
+import "./board.css";
+
 import { Square } from "./square";
 
 import { createEffect, createSignal, For } from "solid-js";
@@ -125,6 +127,8 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     <DragDropProvider>
       <DragDropSensors />
       <div
+        id="board"
+        class="unselectable"
         style={{
           display: "grid",
           "grid-template-columns": `repeat(${cols}, ${square_height})`,
