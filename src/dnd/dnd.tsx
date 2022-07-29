@@ -1,11 +1,7 @@
-import "./dnd.css";
 import {
-  DragDropProvider,
-  useDragDropContext,
-  DragDropSensors,
   createDraggable,
   createDroppable,
-  DragEventHandler,
+  useDragDropContext,
 } from "@thisbeyond/solid-dnd";
 import { ParentComponent } from "solid-js";
 
@@ -18,7 +14,7 @@ declare module "solid-js" {
   }
 }
 
-const Draggable: ParentComponent<{
+export const Draggable: ParentComponent<{
   id: string | number;
   type: any;
   class?: string;
@@ -31,7 +27,7 @@ const Draggable: ParentComponent<{
   );
 };
 
-const Droppable: ParentComponent<{
+export const Droppable: ParentComponent<{
   id: string | number;
   type: any;
   class?: string;
@@ -51,64 +47,9 @@ const Droppable: ParentComponent<{
       }
     }
   };
-
   return (
     <div use:droppable class={`${props.class || ""} ${activeClass() || ""}`}>
       {props.children}
     </div>
   );
 };
-
-export const ConditionalDropExample = () => {
-  let startRegion: HTMLDivElement;
-
-  const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
-    if (droppable) {
-      if (draggable.data.type === droppable.data.type) {
-        droppable.node.append(draggable.node);
-      }
-    } else {
-      startRegion.append(draggable.node);
-    }
-  };
-
-  return (
-    <DragDropProvider onDragEnd={onDragEnd}>
-      <DragDropSensors />
-      <div
-        ref={startRegion!}
-        class="min-h-15 flex flex-wrap gap-5 justify-center"
-      >
-        <Draggable id={1} type="a" class="draggable">
-          {"Draggable type 'a'"}
-        </Draggable>
-        <Draggable id={2} type="b" class="draggable">
-          {"Draggable type 'b'"}
-        </Draggable>
-      </div>
-      <Droppable
-        id={1}
-        type="a"
-        class="droppable"
-        classAccept="!droppable-accept"
-        classReject="!droppable-reject"
-      >
-        Droppable
-        <br />
-        {`accepts type 'a'`}
-      </Droppable>
-      <Droppable
-        id={2}
-        type="b"
-        class="droppable"
-        classAccept="!droppable-accept"
-        classReject="!droppable-reject"
-      >
-        Droppable too
-        <br />
-        {`accepts type 'b'`}
-      </Droppable>
-    </DragDropProvider>
-  );
-};
-export default ConditionalDropExample;
