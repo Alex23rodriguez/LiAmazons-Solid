@@ -1,4 +1,5 @@
-import "./square.scss";
+import "./square.css";
+import "./tokens/token.css";
 
 import { Queen } from "./tokens/queen";
 import { Movable } from "./tokens/movable";

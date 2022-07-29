@@ -1,5 +1,4 @@
 import { Draggable } from "../../dnd/dnd";
-import "./queen.scss";
 
 export const Queen = (props: { team: string }) => (
   <Draggable type={props.team} class="container">
