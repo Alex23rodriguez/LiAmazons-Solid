@@ -6,15 +6,8 @@ import {
   createDraggable,
   createDroppable,
 } from "@thisbeyond/solid-dnd";
+import { Component, ParentComponent } from "solid-js";
 
-const Draggable = (props) => {
-  const draggable = createDraggable(props.id, { type: props.type });
-  return (
-    <div use:draggable class="draggable">
-      {`Draggable type '${props.type}'`}
-    </div>
-  );
-};
 declare module "solid-js" {
   namespace JSX {
     interface Directives {
@@ -25,6 +18,18 @@ declare module "solid-js" {
 }
 
 const Droppable = (props) => {
+const Draggable: ParentComponent<{ id: string | number; type: any }> = (
+  props
+) => {
+  const draggable = createDraggable(props.id, { type: props.type });
+  return (
+    <div use:draggable class="draggable">
+      {`Draggable type '${props.type}'`}
+    </div>
+  );
+};
+
+const Droppable: Component<{ id: string | number; type: any }> = (props) => {
   const droppable = createDroppable(props.id, { type: props.type });
 
   const [, { activeDraggable }] = useDragDropContext();
