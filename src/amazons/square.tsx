@@ -4,9 +4,8 @@ import "./tokens/token.css";
 import { Queen } from "./tokens/queen";
 import { Movable } from "./tokens/movable";
 import { Arrow } from "./tokens/arrow";
-import { JSX } from "solid-js/jsx-runtime";
-import { Match, Show, Switch } from "solid-js";
-import { Droppable } from "../dnd/dnd";
+import { Match, Switch } from "solid-js";
+import { createDroppable } from "@thisbeyond/solid-dnd";
 
 export const Square = (props: {
   token?: string;
@@ -16,10 +15,14 @@ export const Square = (props: {
   color: string;
   onClick: () => void;
 }) => {
+  const droppable = createDroppable(props.name);
+
   return (
     <div
+      ref={droppable.ref}
       onMouseDown={props.onClick}
       style={{ height: props.height }}
+      classList={{ "active-drop": droppable.isActiveDroppable }}
       class={`square color${props.color}`}
     >
       <Switch>
@@ -34,13 +37,6 @@ export const Square = (props: {
         </Match>
       </Switch>
       {/* <Show when={props.token}>{tokens[props.token as string]()}</Show> */}
-      <Droppable
-        type={props.token || ""}
-        class="fullsize"
-        other_div_props={{ id: "d" + props.name }}
-        classAccept="draggable"
-        classReject="not-draggable"
-      ></Droppable>
     </div>
   );
 };

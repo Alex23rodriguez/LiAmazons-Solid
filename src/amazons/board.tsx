@@ -6,7 +6,11 @@ import { createEffect, createSignal, Index } from "solid-js";
 import { Amazons, coords_to_square } from "amazons-game-engine";
 import { _ClientImpl } from "boardgame.io/dist/types/src/client/client";
 import { Square as TSquare } from "amazons-game-engine/dist/types";
-import { DragDropProvider, DragDropSensors } from "@thisbeyond/solid-dnd";
+import {
+  DragDropProvider,
+  DragDropSensors,
+  DragEventHandler,
+} from "@thisbeyond/solid-dnd";
 
 export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   // state
@@ -127,7 +131,8 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   // squares.set(sq, null);
   // }
 
-  const squares = () => {
+  const get_squares = () => {
+    // reset
     squares_map.forEach((_, s) => squares_map.set(s, ""));
     queens().b.forEach((s) => squares_map.set(s, "b"));
     queens().w.forEach((s) => squares_map.set(s, "w"));
@@ -136,12 +141,13 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     return squares_map;
   };
 
+  const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
+    if (droppable) {
+      console.log(droppable.id);
+    }
+  };
   return (
-    <DragDropProvider
-      onDragEnd={() => {
-        console.log("drag ended");
-      }}
-    >
+    <DragDropProvider onDragEnd={onDragEnd}>
       <DragDropSensors />
       <div
         id="board"
@@ -151,7 +157,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
           "grid-template-columns": `repeat(${cols}, ${square_height})`,
         }}
       >
-        <Index each={Array.from(squares())}>
+        <Index each={Array.from(get_squares())}>
           {(entry) => (
             <Square
               name={entry()[0]}
