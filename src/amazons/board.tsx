@@ -2,7 +2,7 @@ import "./board.css";
 
 import { Square } from "./square";
 
-import { createEffect, createSignal, For } from "solid-js";
+import { createEffect, createSignal, Index } from "solid-js";
 import { Amazons, coords_to_square } from "amazons-game-engine";
 import { _ClientImpl } from "boardgame.io/dist/types/src/client/client";
 import { Square as TSquare } from "amazons-game-engine/dist/types";
@@ -118,25 +118,23 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   // let squares: TSquare[] = [];
   // let squares = new Map<string, string | null>
 
-  const empty_squares: [TSquare, string][] = Array.from(
-    { length: cols * rows },
-    (_, i) => [index_to_square(i), ""]
+  const squares_map = new Map(
+    Array.from({ length: cols * rows }, (_, i) => [index_to_square(i), ""])
   );
 
   // for (let i = 0; i < cols * rows; i++) {
   // let sq = index_to_square(i);
   // squares.set(sq, null);
   // }
-  const squares = () => {
-    let m = new Map(empty_squares);
-    queens().b.forEach((s) => m.set(s, "b"));
-    queens().w.forEach((s) => m.set(s, "w"));
-    arrows().forEach((s) => m.set(s, "x"));
-    canMove().forEach((s) => m.set(s, "m"));
-    return m;
-  };
 
-  (window as any).sq = [];
+  const squares = () => {
+    squares_map.forEach((_, s) => squares_map.set(s, ""));
+    queens().b.forEach((s) => squares_map.set(s, "b"));
+    queens().w.forEach((s) => squares_map.set(s, "w"));
+    arrows().forEach((s) => squares_map.set(s, "x"));
+    canMove().forEach((s) => squares_map.set(s, "m"));
+    return squares_map;
+  };
 
   return (
     <DragDropProvider
@@ -153,21 +151,21 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
           "grid-template-columns": `repeat(${cols}, ${square_height})`,
         }}
       >
-        <For each={Array.from(squares())}>
-          {([sq, token]) => (
+        <Index each={Array.from(squares())}>
+          {(entry) => (
             <Square
-              name={sq}
+              name={entry()[0]}
               height={square_height}
               color={
-                (highlight().includes(sq) ? "H" : "") +
-                (amazons.square_color(sq) === "light" ? 0 : 1)
+                (highlight().includes(entry()[0]) ? "H" : "") +
+                (amazons.square_color(entry()[0]) === "light" ? 0 : 1)
               }
-              active={!amazons.shooting() && amazons.turn() === token}
-              token={token}
-              onClick={makeClickHandler(sq)}
+              active={!amazons.shooting() && amazons.turn() === entry()[1]}
+              token={entry()[1]}
+              onClick={makeClickHandler(entry()[0])}
             />
           )}
-        </For>
+        </Index>
       </div>
     </DragDropProvider>
   );
