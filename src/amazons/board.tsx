@@ -145,7 +145,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     }
   };
 
-  let square_height = `calc(80vw / ${cols})`;
+  let square_height = `calc(min(80vw, 80vh) / ${cols})`;
 
   const squares_map = new Map(
     Array.from({ length: cols * rows }, (_, i) => [index_to_square(i), ""])
