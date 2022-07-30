@@ -21,7 +21,7 @@ export const Queen = (props: {
       {/* draggable part of component */}
       {/* this goes at the end so it is drawn on top*/}
       <div
-        class="inner-circle large invisible"
+        class="inner-circle large invisible-drag"
         classList={{ inactive: !props.active }}
         {
           ...draggable.dragActivators /* most important part!*/

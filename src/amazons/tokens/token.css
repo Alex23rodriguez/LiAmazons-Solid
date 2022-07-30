@@ -19,9 +19,10 @@
   transform: translate(-50%, -50%);
 }
 
-.invisible {
+.invisible-drag {
   border: none;
   cursor: pointer;
+  touch-action: none;
 }
 
 .inactive {
