@@ -1,6 +1,6 @@
 import { createDraggable, transformStyle } from "@thisbeyond/solid-dnd";
 
-let queen_id = 0; // TODO maybe move ID elsewhere
+let queen_id = 1; // TODO maybe move ID elsewhere
 export const Queen = (props: { team: string; active: boolean }) => {
   const draggable = createDraggable(queen_id++);
   return (
