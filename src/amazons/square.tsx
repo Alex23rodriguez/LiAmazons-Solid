@@ -14,14 +14,18 @@ export const Square = (props: {
   name: TSquare;
   height: string;
   color: string;
-  onClick: () => void;
+  onMouseDown: () => void;
+  onMouseUp: () => void;
 }) => {
-  const droppable = createDroppable(props.name);
+  const droppable = createDroppable(props.name, {
+    canMove: props.token,
+  });
 
   return (
     <div
       ref={droppable.ref}
-      onMouseDown={props.onClick}
+      onMouseDown={props.onMouseDown}
+      onMouseUp={props.onMouseUp}
       style={{ height: props.height }}
       classList={{ "active-drop": droppable.isActiveDroppable }}
       class={`square color${props.color}`}

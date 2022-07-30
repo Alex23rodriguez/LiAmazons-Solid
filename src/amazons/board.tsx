@@ -77,7 +77,32 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     setArrows(amazons.pieces()["x"]);
   }
 
-  const makeClickHandler = (sq: TSquare) => () => {
+  // drag or click functions
+  function sendMove(from: TSquare, to: TSquare) {
+    amazons.move([from, to]);
+    props.client.moves.move([from, to]);
+    setHighlight([from, to]);
+    setSelected(from);
+  }
+
+  function selectQueen(sq: TSquare) {
+    // select a queen
+    if (sq === selected()) return;
+
+    setSelected(sq);
+    const moves = amazons.moves_dict()[sq];
+    setCanMove(moves ? moves : []);
+    setHighlight([sq]);
+    return;
+  }
+
+  function unselectQueen() {
+    setSelected(null);
+    setCanMove([]);
+    setHighlight([]);
+  }
+
+  const makeClickHandlerDown = (sq: TSquare) => () => {
     if (ctx().gameover) return;
 
     if (amazons.shooting()) {
@@ -96,26 +121,28 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
 
     if (queens()[amazons.turn()].includes(sq) && sq !== selected()) {
       // select a queen
-      setSelected(sq);
-      const moves = amazons.moves_dict()[selected() as TSquare];
-      setCanMove(moves ? moves : []);
-      setHighlight([sq]);
+      selectQueen(sq);
       return;
     }
     // move a queen
     if (canMove().includes(sq)) {
-      amazons.move([selected() as TSquare, sq]);
-      props.client.moves.move([selected() as TSquare, sq]);
-
-      setHighlight([selected() as TSquare, sq]);
-      setSelected(sq);
-
+      sendMove(selected()!, sq);
       return;
     }
-    setSelected(null);
-    setCanMove([]);
-    setHighlight([]);
-    return;
+  };
+
+  const makeClickHandlerUp = (sq: TSquare) => {
+    console.log("making click handler");
+    return () => {
+      if (ctx().gameover) return;
+
+      if (
+        !amazons.shooting() &&
+        (sq === selected() || canMove().includes(sq))
+      ) {
+        unselectQueen();
+      }
+    };
   };
 
   let square_height = `calc(80vw / ${cols})`;
@@ -141,14 +168,22 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     return squares_map;
   };
 
+  const onDragStart: DragEventHandler = ({ draggable }) => {
+    selectQueen(draggable.data.square);
+  };
+
   const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
     if (droppable) {
-      console.log("from", draggable.data.square);
-      console.log("to", droppable.id);
+      if (droppable.id === selected()) {
+        unselectQueen();
+      } else if (canMove().includes(droppable.id as TSquare)) {
+        sendMove(draggable.data.square, droppable.id as TSquare);
+      }
     }
   };
+
   return (
-    <DragDropProvider onDragEnd={onDragEnd}>
+    <DragDropProvider onDragEnd={onDragEnd} onDragStart={onDragStart}>
       <DragDropSensors />
       <div
         id="board"
@@ -167,9 +202,14 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
                 (highlight().includes(entry()[0]) ? "H" : "") +
                 (amazons.square_color(entry()[0]) === "light" ? 0 : 1)
               }
-              active={!amazons.shooting() && amazons.turn() === entry()[1]}
+              active={
+                !amazons.shooting() &&
+                amazons.turn() === entry()[1] &&
+                !ctx().gameover
+              }
               token={entry()[1]}
-              onClick={makeClickHandler(entry()[0])}
+              onMouseDown={makeClickHandlerDown(entry()[0])}
+              onMouseUp={makeClickHandlerUp(entry()[0])}
             />
           )}
         </Index>
