@@ -1,8 +1,13 @@
 import { createDraggable, transformStyle } from "@thisbeyond/solid-dnd";
+import { Square } from "amazons-game-engine/dist/types";
 
 let queen_id = 1; // TODO maybe move ID elsewhere
-export const Queen = (props: { team: string; active: boolean }) => {
-  const draggable = createDraggable(queen_id++);
+export const Queen = (props: {
+  team: string;
+  active: boolean;
+  square: Square;
+}) => {
+  const draggable = createDraggable(queen_id++, { square: props.square });
   return (
     <div
       class="container"

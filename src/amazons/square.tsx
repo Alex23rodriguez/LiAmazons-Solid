@@ -6,11 +6,12 @@ import { Movable } from "./tokens/movable";
 import { Arrow } from "./tokens/arrow";
 import { Match, Switch } from "solid-js";
 import { createDroppable } from "@thisbeyond/solid-dnd";
+import { Square as TSquare } from "amazons-game-engine/dist/types";
 
 export const Square = (props: {
   token?: string;
   active?: boolean; // make sure to give with queens
-  name: string;
+  name: TSquare;
   height: string;
   color: string;
   onClick: () => void;
@@ -33,10 +34,15 @@ export const Square = (props: {
           <Movable />
         </Match>
         <Match when={props.token === "w" || props.token === "b"}>
-          <Queen team={props.token!} active={props.active!} />
+          <Queen
+            team={props.token!}
+            active={props.active!}
+            square={props.name}
+          />
         </Match>
       </Switch>
-      {/* <Show when={props.token}>{tokens[props.token as string]()}</Show> */}
+
+      {props.name}
     </div>
   );
 };

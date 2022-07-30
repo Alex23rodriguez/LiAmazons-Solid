@@ -143,7 +143,8 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
 
   const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
     if (droppable) {
-      console.log(droppable.id);
+      console.log("from", draggable.data.square);
+      console.log("to", droppable.id);
     }
   };
   return (
