@@ -97,13 +97,19 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   }
 
   function unselectQueen() {
+    if (selected() === null) return;
     setSelected(null);
     setCanMove([]);
     setHighlight([]);
   }
 
-  const makeClickHandlerDown = (sq: TSquare) => () => {
+  let disableUpClickHandler = true;
+  let wasSelected = false;
+
+  const makeClickDownHandler = (sq: TSquare) => () => {
     if (ctx().gameover) return;
+    disableUpClickHandler = false; // because drag starts after and ends before
+    wasSelected = selected() === sq;
 
     if (amazons.shooting()) {
       if (canMove().includes(sq)) {
@@ -131,18 +137,12 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     }
   };
 
-  const makeClickHandlerUp = (sq: TSquare) => {
-    console.log("making click handler");
-    return () => {
-      if (ctx().gameover) return;
+  const makeClickUpHandler = (sq: TSquare) => () => {
+    if (disableUpClickHandler || amazons.shooting() || ctx().gameover) return;
 
-      if (
-        !amazons.shooting() &&
-        (sq === selected() || canMove().includes(sq))
-      ) {
-        unselectQueen();
-      }
-    };
+    if (sq !== selected() || wasSelected) {
+      unselectQueen();
+    }
   };
 
   let square_height = `calc(80vw / ${cols})`;
@@ -154,6 +154,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   const get_squares = () => {
     // reset
     squares_map.forEach((_, s) => squares_map.set(s, ""));
+    // set values
     queens().b.forEach((s) => squares_map.set(s, "b"));
     queens().w.forEach((s) => squares_map.set(s, "w"));
     arrows().forEach((s) => squares_map.set(s, "x"));
@@ -167,12 +168,9 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   };
 
   const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
-    if (droppable) {
-      if (droppable.id === selected()) {
-        unselectQueen();
-      } else if (canMove().includes(droppable.id as TSquare)) {
-        sendMove(draggable.data.square, droppable.id as TSquare);
-      }
+    disableUpClickHandler = true; // this happens before upClick, so we want to prevent double action
+    if (droppable && canMove().includes(droppable.id as TSquare)) {
+      sendMove(draggable.data.square, droppable.id as TSquare);
     }
   };
 
@@ -202,8 +200,8 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
                 !ctx().gameover
               }
               token={entry()[1]}
-              onMouseDown={makeClickHandlerDown(entry()[0])}
-              onMouseUp={makeClickHandlerUp(entry()[0])}
+              onMouseDown={makeClickDownHandler(entry()[0])}
+              onMouseUp={makeClickUpHandler(entry()[0])}
             />
           )}
         </Index>
