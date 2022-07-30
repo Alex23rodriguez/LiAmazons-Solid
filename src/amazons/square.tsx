@@ -34,8 +34,8 @@ export const Square = (props: {
         <Match when={props.token === "x"}>
           <Arrow />
         </Match>
-        <Match when={props.token === "m"}>
-          <Movable />
+        <Match when={props.token![0] === "m"}>
+          <Movable shooting={props.token![1] === "y"} />
         </Match>
         <Match when={props.token === "w" || props.token === "b"}>
           <Queen

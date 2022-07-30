@@ -146,17 +146,10 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   };
 
   let square_height = `calc(80vw / ${cols})`;
-  // let squares: TSquare[] = [];
-  // let squares = new Map<string, string | null>
 
   const squares_map = new Map(
     Array.from({ length: cols * rows }, (_, i) => [index_to_square(i), ""])
   );
-
-  // for (let i = 0; i < cols * rows; i++) {
-  // let sq = index_to_square(i);
-  // squares.set(sq, null);
-  // }
 
   const get_squares = () => {
     // reset
@@ -164,7 +157,8 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     queens().b.forEach((s) => squares_map.set(s, "b"));
     queens().w.forEach((s) => squares_map.set(s, "w"));
     arrows().forEach((s) => squares_map.set(s, "x"));
-    canMove().forEach((s) => squares_map.set(s, "m"));
+    let shoot = amazons.shooting() ? "y" : "n";
+    canMove().forEach((s) => squares_map.set(s, "m" + shoot));
     return squares_map;
   };
 
