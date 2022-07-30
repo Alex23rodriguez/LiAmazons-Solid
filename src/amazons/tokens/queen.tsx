@@ -1,8 +1,26 @@
-import { Draggable } from "../../dnd/dnd";
+import { createDraggable, transformStyle } from "@thisbeyond/solid-dnd";
 
-export const Queen = (props: { team: string; active: boolean }) => (
-  <Draggable type={props.team} class="container" active={props.active}>
-    <div class={`inner-circle large ${props.team}`}></div>
-    <div class="inner-circle small"></div>
-  </Draggable>
-);
+let queen_id = 0; // TODO maybe move ID elsewhere
+export const Queen = (props: { team: string; active: boolean }) => {
+  const draggable = createDraggable(queen_id++);
+  return (
+    <div
+      class="container"
+      ref={draggable.ref}
+      style={transformStyle(draggable.transform)}
+    >
+      {/* actual queen layout*/}
+      <div class={`inner-circle large ${props.team}`}></div>
+      <div class="inner-circle small"></div>
+      {/* draggable part of component */}
+      {/* this goes at the end so it is drawn on top*/}
+      <div
+        class="inner-circle large invisible"
+        classList={{ inactive: !props.active }}
+        {
+          ...draggable.dragActivators /* most important part!*/
+        }
+      />
+    </div>
+  );
+};
