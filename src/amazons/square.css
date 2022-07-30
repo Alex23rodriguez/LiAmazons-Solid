@@ -1,5 +1,8 @@
 .square {
   position: relative;
+  color: darkslateblue;
+  text-align: right;
+  padding-right: 4px;
 }
 
 .active-drop:before {
