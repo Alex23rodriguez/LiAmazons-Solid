@@ -5,18 +5,12 @@ import { Queen } from "./tokens/queen";
 import { Movable } from "./tokens/movable";
 import { Arrow } from "./tokens/arrow";
 import { JSX } from "solid-js/jsx-runtime";
-import { Show } from "solid-js";
+import { Match, Show, Switch } from "solid-js";
 import { Droppable } from "../dnd/dnd";
-
-const tokens: { [token: string]: () => JSX.Element } = {
-  w: () => <Queen team="w" active />,
-  b: () => <Queen team="b" active={false} />,
-  x: () => <Arrow />,
-  m: () => <Movable />,
-};
 
 export const Square = (props: {
   token?: string;
+  active?: boolean; // make sure to give with queens
   name: string;
   height: string;
   color: string;
@@ -28,7 +22,18 @@ export const Square = (props: {
       style={{ height: props.height }}
       class={`square color${props.color}`}
     >
-      <Show when={props.token}>{tokens[props.token as string]()}</Show>
+      <Switch>
+        <Match when={props.token === "x"}>
+          <Arrow />
+        </Match>
+        <Match when={props.token === "m"}>
+          <Movable />
+        </Match>
+        <Match when={props.token === "w" || props.token === "b"}>
+          <Queen team={props.token!} active={props.active!} />
+        </Match>
+      </Switch>
+      {/* <Show when={props.token}>{tokens[props.token as string]()}</Show> */}
       <Droppable
         type={props.token || ""}
         class="fullsize"

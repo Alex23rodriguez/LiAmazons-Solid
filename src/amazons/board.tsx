@@ -115,11 +115,26 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   };
 
   let square_height = `calc(80vw / ${cols})`;
-  let squares: TSquare[] = [];
-  for (let i = 0; i < cols * rows; i++) {
-    let sq = index_to_square(i);
-    squares.push(sq);
-  }
+  // let squares: TSquare[] = [];
+  // let squares = new Map<string, string | null>
+
+  const empty_squares: [TSquare, string][] = Array.from(
+    { length: cols * rows },
+    (_, i) => [index_to_square(i), ""]
+  );
+
+  // for (let i = 0; i < cols * rows; i++) {
+  // let sq = index_to_square(i);
+  // squares.set(sq, null);
+  // }
+  const squares = () => {
+    let m = new Map(empty_squares);
+    queens().b.forEach((s) => m.set(s, "b"));
+    queens().w.forEach((s) => m.set(s, "w"));
+    arrows().forEach((s) => m.set(s, "x"));
+    canMove().forEach((s) => m.set(s, "m"));
+    return m;
+  };
 
   (window as any).sq = [];
 
@@ -138,8 +153,8 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
           "grid-template-columns": `repeat(${cols}, ${square_height})`,
         }}
       >
-        <For each={squares}>
-          {(sq) => (
+        <For each={Array.from(squares())}>
+          {([sq, token]) => (
             <Square
               name={sq}
               height={square_height}
@@ -147,17 +162,8 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
                 (highlight().includes(sq) ? "H" : "") +
                 (amazons.square_color(sq) === "light" ? 0 : 1)
               }
-              token={
-                queens()["w"].includes(sq)
-                  ? "w"
-                  : queens()["b"].includes(sq)
-                  ? "b"
-                  : arrows().includes(sq)
-                  ? "x"
-                  : canMove().includes(sq)
-                  ? "m"
-                  : undefined
-              }
+              active={!amazons.shooting() && amazons.turn() === token}
+              token={token}
               onClick={makeClickHandler(sq)}
             />
           )}
