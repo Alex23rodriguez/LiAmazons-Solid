@@ -8,6 +8,7 @@ export const Queen = (props: { team: string; active: boolean }) => {
       class="container"
       ref={draggable.ref}
       style={transformStyle(draggable.transform)}
+      classList={{ "active-dragged": draggable.isActiveDraggable }}
     >
       {/* actual queen layout*/}
       <div class={`inner-circle large ${props.team}`}></div>

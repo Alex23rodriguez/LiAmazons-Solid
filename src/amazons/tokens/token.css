@@ -5,6 +5,10 @@
   z-index: 1;
 }
 
+.active-dragged {
+  z-index: 2;
+}
+
 .inner-circle {
   border-radius: 50%;
   //   background-color: white;
