@@ -4,9 +4,11 @@ import {
   DragDropSensors,
   createDraggable,
   createDroppable,
+  DragEventHandler,
 } from "@thisbeyond/solid-dnd";
+import { Component } from "solid-js";
 
-const Draggable = () => {
+const Draggable: Component = () => {
   const draggable = createDraggable(1);
   return (
     <div use:draggable class="draggable">
@@ -15,7 +17,7 @@ const Draggable = () => {
   );
 };
 
-const Droppable = () => {
+const Droppable: Component = () => {
   const droppable = createDroppable(1);
   return (
     <div
@@ -29,9 +31,9 @@ const Droppable = () => {
 };
 
 const DragAndDropExample = () => {
-  let ref: any;
+  let ref: HTMLDivElement;
 
-  const onDragEnd = ({ draggable, droppable }) => {
+  const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
     if (droppable) {
       droppable.node.append(draggable.node);
     } else {
@@ -42,7 +44,7 @@ const DragAndDropExample = () => {
   return (
     <DragDropProvider onDragEnd={onDragEnd}>
       <DragDropSensors />
-      <div ref={ref} class="min-h-15">
+      <div ref={ref!} class="min-h-15">
         <Draggable />
       </div>
       <Droppable />

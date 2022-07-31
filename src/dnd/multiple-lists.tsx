@@ -8,11 +8,14 @@ import {
   createSortable,
   createDroppable,
   closestCenter,
+  DragEventHandler,
+  Draggable,
+  Droppable,
 } from "@thisbeyond/solid-dnd";
 import { batch, createSignal, For } from "solid-js";
 import { createStore } from "solid-js/store";
 
-const Sortable = (props) => {
+const Sortable = (props: { item: number }) => {
   const sortable = createSortable(props.item);
   return (
     <div
@@ -25,7 +28,7 @@ const Sortable = (props) => {
   );
 };
 
-const Column = (props) => {
+const Column = (props: { id: string; items: number[] }) => {
   const droppable = createDroppable(props.id);
   return (
     <div use:droppable class="column">
@@ -45,9 +48,9 @@ const MultipleListsExample = () => {
 
   const containerIds = () => Object.keys(containers);
 
-  const isContainer = (id) => containerIds().includes(id);
+  const isContainer = (id: string) => containerIds().includes(id);
 
-  const getContainer = (id) => {
+  const getContainer = (id: number) => {
     for (const [key, items] of Object.entries(containers)) {
       if (items.includes(id)) {
         return key;
@@ -55,7 +58,7 @@ const MultipleListsExample = () => {
     }
   };
 
-  const closestContainerOrItem = (draggable, droppables, context) => {
+  const closestContainerOrItem = (draggable, droppables, context: any) => {
     const closestContainer = closestCenter(
       draggable,
       droppables.filter((droppable) => isContainer(droppable.id)),
@@ -119,15 +122,16 @@ const MultipleListsExample = () => {
     }
   };
 
-  const onDragStart = ({ draggable }) => setActiveItem(draggable.id);
+  const onDragStart: DragEventHandler = ({ draggable }) =>
+    setActiveItem(draggable.id);
 
-  const onDragOver = ({ draggable, droppable }) => {
+  const onDragOver: DragEventHandler = ({ draggable, droppable }) => {
     if (draggable && droppable) {
       move(draggable, droppable);
     }
   };
 
-  const onDragEnd = ({ draggable, droppable }) => {
+  const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
     if (draggable && droppable) {
       move(draggable, droppable, false);
     }

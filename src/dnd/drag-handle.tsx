@@ -6,6 +6,7 @@ import {
   createDraggable,
   createDroppable,
   transformStyle,
+  DragEventHandler,
 } from "@thisbeyond/solid-dnd";
 
 const Draggable = () => {
@@ -38,9 +39,9 @@ const Droppable = () => {
 };
 
 const FineGrainedExample = () => {
-  let ref;
+  let ref: HTMLDivElement;
 
-  const onDragEnd = ({ draggable, droppable }) => {
+  const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
     if (droppable) {
       droppable.node.append(draggable.node);
     } else {
@@ -51,7 +52,7 @@ const FineGrainedExample = () => {
   return (
     <DragDropProvider onDragEnd={onDragEnd}>
       <DragDropSensors />
-      <div ref={ref} class="min-h-15">
+      <div ref={ref!} class="min-h-15">
         <Draggable />
       </div>
       <Droppable />

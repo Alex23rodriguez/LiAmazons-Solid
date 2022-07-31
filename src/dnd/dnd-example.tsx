@@ -87,7 +87,7 @@ export const ConditionalDropExample = () => {
         </Draggable>
       </div>
       <Droppable
-        id={1}
+        id={3}
         type="a"
         class="droppable"
         classAccept="!droppable-accept"
@@ -98,7 +98,7 @@ export const ConditionalDropExample = () => {
         {`accepts type 'a'`}
       </Droppable>
       <Droppable
-        id={2}
+        id={3}
         type="b"
         class="droppable"
         classAccept="!droppable-accept"

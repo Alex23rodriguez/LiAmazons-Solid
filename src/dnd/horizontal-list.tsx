@@ -6,10 +6,11 @@ import {
   SortableProvider,
   createSortable,
   closestCenter,
+  DragEventHandler,
 } from "@thisbeyond/solid-dnd";
-import { createSignal, For } from "solid-js";
+import { createSignal, For, ParentComponent } from "solid-js";
 
-const Sortable = (props) => {
+const Sortable: ParentComponent<{ item: number }> = (props) => {
   const sortable = createSortable(props.item);
   return (
     <div
@@ -24,16 +25,17 @@ const Sortable = (props) => {
 
 export const SortableHorizontalListExample = () => {
   const [items, setItems] = createSignal([1, 2, 3]);
-  const [activeItem, setActiveItem] = createSignal(null);
+  const [activeItem, setActiveItem] = createSignal<number | null>(null);
   const ids = () => items();
 
-  const onDragStart = ({ draggable }) => setActiveItem(draggable.id);
+  const onDragStart: DragEventHandler = ({ draggable }) =>
+    setActiveItem(draggable.id as number);
 
-  const onDragEnd = ({ draggable, droppable }) => {
+  const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
     if (draggable && droppable) {
       const currentItems = ids();
-      const fromIndex = currentItems.indexOf(draggable.id);
-      const toIndex = currentItems.indexOf(droppable.id);
+      const fromIndex = currentItems.indexOf(draggable.id as number);
+      const toIndex = currentItems.indexOf(droppable.id as number);
       if (fromIndex !== toIndex) {
         const updatedItems = currentItems.slice();
         updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));

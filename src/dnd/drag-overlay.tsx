@@ -5,6 +5,7 @@ import {
   DragOverlay,
   createDraggable,
   createDroppable,
+  DragEventHandler,
 } from "@thisbeyond/solid-dnd";
 
 // notice that, when moving the draggable, a shadow stays behind
@@ -36,9 +37,9 @@ const Droppable = () => {
 };
 
 const DragOverlayExample = () => {
-  let ref;
+  let ref: HTMLDivElement;
 
-  const onDragEnd = ({ draggable, droppable }) => {
+  const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
     if (droppable) {
       droppable.node.append(draggable.node);
     } else {
@@ -49,7 +50,7 @@ const DragOverlayExample = () => {
   return (
     <DragDropProvider onDragEnd={onDragEnd}>
       <DragDropSensors />
-      <div ref={ref} class="min-h-15">
+      <div ref={ref!} class="min-h-15">
         <Draggable />
       </div>
       <Droppable />

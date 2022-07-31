@@ -5,9 +5,13 @@ import {
   DragDropSensors,
   createDraggable,
   createDroppable,
+  DragEventHandler,
 } from "@thisbeyond/solid-dnd";
+import { ParentComponent } from "solid-js";
 
-const Draggable = (props) => {
+const Draggable: ParentComponent<{ id: string | number; type: string }> = (
+  props
+) => {
   const draggable = createDraggable(props.id, { type: props.type });
   return (
     <div use:draggable class="draggable">
@@ -16,14 +20,16 @@ const Draggable = (props) => {
   );
 };
 
-const Droppable = (props) => {
+const Droppable: ParentComponent<{ id: string | number; type: string }> = (
+  props
+) => {
   const droppable = createDroppable(props.id, { type: props.type });
 
-  const [, { activeDraggable }] = useDragDropContext();
+  const [, { activeDraggable }] = useDragDropContext()!;
 
   const activeClass = () => {
     if (droppable.isActiveDroppable) {
-      if (activeDraggable().data.type === props.type) {
+      if (activeDraggable()!.data.type === props.type) {
         return "!droppable-accept";
       } else {
         return "!droppable-reject";
@@ -42,9 +48,9 @@ const Droppable = (props) => {
 };
 
 export const ConditionalDropExample = () => {
-  let ref;
+  let ref: HTMLDivElement;
 
-  const onDragEnd = ({ draggable, droppable }) => {
+  const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
     if (droppable) {
       if (draggable.data.type === droppable.data.type) {
         droppable.node.append(draggable.node);
@@ -57,7 +63,7 @@ export const ConditionalDropExample = () => {
   return (
     <DragDropProvider onDragEnd={onDragEnd}>
       <DragDropSensors />
-      <div ref={ref} class="min-h-15 flex flex-wrap gap-5 justify-center">
+      <div ref={ref!} class="min-h-15 flex flex-wrap gap-5 justify-center">
         <Draggable id={1} type="a" />
         <Draggable id={2} type="b" />
       </div>

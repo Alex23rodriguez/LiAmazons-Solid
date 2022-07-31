@@ -11,6 +11,7 @@ declare module "solid-js" {
     interface Directives {
       draggable: boolean;
       droppable: boolean;
+      sortable: boolean;
     }
   }
 }
