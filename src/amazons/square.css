@@ -1,0 +1,41 @@
+.square {
+  position: relative;
+  color: darkslateblue;
+  text-align: right;
+  padding-right: 4px;
+}
+
+.active-drop:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  top: 0;
+  border: 3px solid black;
+  border-radius: 20px;
+}
+
+.color0 {
+  background-color: #ebecd0;
+}
+
+.color1 {
+  background-color: #779556;
+}
+
+.colorH0 {
+  background-color: #f7f769;
+}
+
+.colorH1 {
+  background-color: #bbcb2b;
+}
+
+.draggable {
+  background-color: green;
+}
+
+.not-draggable {
+  background-color: red;
+}

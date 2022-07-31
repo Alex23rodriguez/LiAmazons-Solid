@@ -1,9 +1,16 @@
+import "./board.css";
+
 import { Square } from "./square";
 
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createSignal, Index } from "solid-js";
 import { Amazons, coords_to_square } from "amazons-game-engine";
 import { _ClientImpl } from "boardgame.io/dist/types/src/client/client";
 import { Square as TSquare } from "amazons-game-engine/dist/types";
+import {
+  DragDropProvider,
+  DragDropSensors,
+  DragEventHandler,
+} from "@thisbeyond/solid-dnd";
 
 export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   // state
@@ -70,8 +77,39 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     setArrows(amazons.pieces()["x"]);
   }
 
-  const makeClickHandler = (sq: TSquare) => () => {
+  // drag or click functions
+  function sendMove(from: TSquare, to: TSquare) {
+    amazons.move([from, to]);
+    props.client.moves.move([from, to]);
+    setHighlight([from, to]);
+    setSelected(from);
+  }
+
+  function selectQueen(sq: TSquare) {
+    // select a queen
+    if (sq === selected()) return;
+
+    setSelected(sq);
+    const moves = amazons.moves_dict()[sq];
+    setCanMove(moves ? moves : []);
+    setHighlight([sq]);
+    return;
+  }
+
+  function unselectQueen() {
+    if (selected() === null) return;
+    setSelected(null);
+    setCanMove([]);
+    setHighlight([]);
+  }
+
+  let disableUpClickHandler = true;
+  let wasSelected = false;
+
+  const makeClickDownHandler = (sq: TSquare) => () => {
     if (ctx().gameover) return;
+    disableUpClickHandler = false; // because drag starts after and ends before
+    wasSelected = selected() === sq;
 
     if (amazons.shooting()) {
       if (canMove().includes(sq)) {
@@ -89,63 +127,85 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
 
     if (queens()[amazons.turn()].includes(sq) && sq !== selected()) {
       // select a queen
-      setSelected(sq);
-      const moves = amazons.moves_dict()[selected() as TSquare];
-      setCanMove(moves ? moves : []);
-      setHighlight([sq]);
+      selectQueen(sq);
       return;
     }
     // move a queen
     if (canMove().includes(sq)) {
-      amazons.move([selected() as TSquare, sq]);
-      props.client.moves.move([selected() as TSquare, sq]);
-
-      setHighlight([selected() as TSquare, sq]);
-      setSelected(sq);
-
+      sendMove(selected()!, sq);
       return;
     }
-    setSelected(null);
-    setCanMove([]);
-    setHighlight([]);
-    return;
   };
 
-  let square_height = `calc(80vw / ${cols})`;
-  let squares = [];
-  for (let i = 0; i < cols * rows; i++) {
-    let sq = index_to_square(i);
-    squares.push(
-      <Square
-        height={square_height}
-        color={
-          (highlight().includes(sq) ? "H" : "") +
-          (amazons.square_color(sq) === "light" ? 0 : 1)
-        }
-        token={
-          queens()["w"].includes(sq)
-            ? "w"
-            : queens()["b"].includes(sq)
-            ? "b"
-            : arrows().includes(sq)
-            ? "x"
-            : canMove().includes(sq)
-            ? "m"
-            : undefined
-        }
-        onClick={makeClickHandler(sq)}
-      />
-    );
-  }
+  const makeClickUpHandler = (sq: TSquare) => () => {
+    if (disableUpClickHandler || amazons.shooting() || ctx().gameover) return;
+
+    if (sq !== selected() || wasSelected) {
+      unselectQueen();
+    }
+  };
+
+  let square_height = `calc(min(80vw, 80vh) / ${cols})`;
+
+  const squares_map = new Map(
+    Array.from({ length: cols * rows }, (_, i) => [index_to_square(i), ""])
+  );
+
+  const get_squares = () => {
+    // reset
+    squares_map.forEach((_, s) => squares_map.set(s, ""));
+    // set values
+    queens().b.forEach((s) => squares_map.set(s, "b"));
+    queens().w.forEach((s) => squares_map.set(s, "w"));
+    arrows().forEach((s) => squares_map.set(s, "x"));
+    let shoot = amazons.shooting() ? "y" : "n";
+    canMove().forEach((s) => squares_map.set(s, "m" + shoot));
+    return squares_map;
+  };
+
+  const onDragStart: DragEventHandler = ({ draggable }) => {
+    selectQueen(draggable.data.square);
+  };
+
+  const onDragEnd: DragEventHandler = ({ draggable, droppable }) => {
+    disableUpClickHandler = true; // this happens before upClick, so we want to prevent double action
+    if (droppable && canMove().includes(droppable.id as TSquare)) {
+      sendMove(draggable.data.square, droppable.id as TSquare);
+    }
+  };
 
   return (
-    <div
-      style={{
-        display: "grid",
-        "grid-template-columns": `repeat(${cols}, ${square_height})`,
-      }}
-    >
-      {squares}
-    </div>
+    <DragDropProvider onDragEnd={onDragEnd} onDragStart={onDragStart}>
+      <DragDropSensors />
+      <div
+        id="board"
+        class="unselectable"
+        style={{
+          display: "grid",
+          "grid-template-columns": `repeat(${cols}, ${square_height})`,
+        }}
+      >
+        <Index each={Array.from(get_squares())}>
+          {(entry) => (
+            <Square
+              name={entry()[0]}
+              height={square_height}
+              color={
+                (highlight().includes(entry()[0]) ? "H" : "") +
+                (amazons.square_color(entry()[0]) === "light" ? 0 : 1)
+              }
+              active={
+                !amazons.shooting() &&
+                amazons.turn() === entry()[1] &&
+                !ctx().gameover
+              }
+              token={entry()[1]}
+              onMouseDown={makeClickDownHandler(entry()[0])}
+              onMouseUp={makeClickUpHandler(entry()[0])}
+            />
+          )}
+        </Index>
+      </div>
+    </DragDropProvider>
   );
 };
