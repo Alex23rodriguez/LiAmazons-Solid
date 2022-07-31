@@ -1,7 +1,7 @@
 import "./square.css";
 import "./tokens/token.css";
 
-import { Queen } from "./tokens/queen";
+import { FakeQueen, Queen } from "./tokens/queen";
 import { Movable } from "./tokens/movable";
 import { Arrow } from "./tokens/arrow";
 import { Match, Switch } from "solid-js";
@@ -38,6 +38,7 @@ export const Square = (props: {
           <Movable shooting={props.token![1] === "y"} />
         </Match>
         <Match when={props.token === "w" || props.token === "b"}>
+          <FakeQueen team={props.token!} />
           <Queen
             team={props.token!}
             active={props.active!}
@@ -45,8 +46,7 @@ export const Square = (props: {
           />
         </Match>
       </Switch>
-
-      {props.name}
+      {/* {props.name} */}
     </div>
   );
 };

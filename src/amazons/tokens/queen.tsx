@@ -30,3 +30,10 @@ export const Queen = (props: {
     </div>
   );
 };
+
+export const FakeQueen = (props: { team: string }) => (
+  <div class="container ghost">
+    <div class={`inner-circle large ${props.team}`}></div>
+    <div class="inner-circle small"></div>
+  </div>
+);

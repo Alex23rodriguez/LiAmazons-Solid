@@ -25,6 +25,10 @@
   touch-action: none;
 }
 
+.ghost {
+  opacity: 0.5;
+}
+
 .inactive {
   visibility: hidden;
 }
