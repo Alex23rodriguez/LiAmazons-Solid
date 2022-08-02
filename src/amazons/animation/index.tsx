@@ -1,8 +1,7 @@
-import { createSignal } from "solid-js";
-import { render } from "solid-js/web";
+import { createSignal, For, Match, Switch } from "solid-js";
 import { Transition, TransitionGroup } from "solid-transition-group";
 
-function shuffle(array) {
+function shuffle(array: number[]) {
   return array.sort(() => Math.random() - 0.5);
 }
 let nextId = 10;
@@ -43,14 +42,16 @@ const Example = () => {
       <br />
       <b>Custom JS:</b>
       <Transition
-        onBeforeEnter={(el) => (el.style.opacity = 0)}
+        onBeforeEnter={(el) => {
+          el.style.opacity = "0";
+        }}
         onEnter={(el, done) => {
           const a = el.animate([{ opacity: 0 }, { opacity: 1 }], {
             duration: 600,
           });
           a.finished.then(done);
         }}
-        onAfterEnter={(el) => (el.style.opacity = 1)}
+        onAfterEnter={(el) => (el.style.opacity = "1")}
         onExit={(el, done) => {
           const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
             duration: 600,
