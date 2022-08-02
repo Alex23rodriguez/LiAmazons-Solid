@@ -13,7 +13,7 @@ import { AmazonsBoard } from "./board";
 import { AmazonsGame } from "./game";
 
 const AmazonsClient = () => {
-  const client = Client({ game: AmazonsGame, debug: true });
+  const client = Client({ game: AmazonsGame, debug: false });
   client.start();
   (window as any).client = client;
 

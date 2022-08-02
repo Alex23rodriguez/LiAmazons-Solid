@@ -1,7 +1,7 @@
 export const Arrow = () => (
-  <div class="container">
+  <div class="w-full h-full absolute z-10">
     <div
-      class="inner-circle very-small"
+      class="inner-circle h-2/5 w-2/5"
       style={{ "background-color": "black" }}
     />
   </div>
