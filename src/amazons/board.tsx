@@ -191,8 +191,11 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
               name={entry()[0]}
               height={square_height}
               color={
-                (highlight().includes(entry()[0]) ? "H" : "") +
-                (amazons.square_color(entry()[0]) === "light" ? 0 : 1)
+                highlight().includes(entry()[0])
+                  ? "bg-yellow-300"
+                  : amazons.square_color(entry()[0]) === "light"
+                  ? "bg-amber-100"
+                  : "bg-green-600"
               }
               active={
                 !amazons.shooting() &&

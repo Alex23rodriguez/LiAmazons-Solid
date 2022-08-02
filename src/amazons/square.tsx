@@ -28,7 +28,7 @@ export const Square = (props: {
       onMouseUp={props.onMouseUp}
       style={{ height: props.height }}
       classList={{ "active-drop": droppable.isActiveDroppable }}
-      class={`square color${props.color}`}
+      class={`relative text-slate-700 text-right pr-1 ${props.color}`}
     >
       <Switch>
         <Match when={props.token === "x"}>
@@ -38,7 +38,6 @@ export const Square = (props: {
           <Movable shooting={props.token![1] === "y"} />
         </Match>
         <Match when={props.token === "w" || props.token === "b"}>
-          <FakeQueen team={props.token!} />
           <Queen
             team={props.token!}
             active={props.active!}
