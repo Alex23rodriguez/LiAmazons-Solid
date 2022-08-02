@@ -1,3 +1,4 @@
+import "./styles.css";
 import { createSignal, For, Match, Switch } from "solid-js";
 import { Transition, TransitionGroup } from "solid-transition-group";
 
