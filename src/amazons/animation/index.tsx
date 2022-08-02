@@ -1,6 +1,8 @@
 import "./styles.css";
+
 import { createSignal, For, Match, Switch } from "solid-js";
 import { Transition, TransitionGroup } from "solid-transition-group";
+import { Button } from "../../components/button";
 
 function shuffle(array: number[]) {
   return array.sort(() => Math.random() - 0.5);
@@ -15,9 +17,9 @@ const Example = () => {
 
   return (
     <>
-      <button onClick={() => toggleShow(!show())}>
+      <Button onClick={() => toggleShow(!show())}>
         {show() ? "Hide" : "Show"}
-      </button>
+      </Button>
       <br />
       <b>Transition:</b>
       <Transition name="slide-fade">
@@ -71,7 +73,7 @@ const Example = () => {
       <br />
       <b>Switch OutIn</b>
       <br />
-      <button onClick={() => setSelect((select() + 1) % 3)}>Next</button>
+      <Button onClick={() => setSelect((select() + 1) % 3)}>Next</Button>
       <Transition name="fade" mode="outin">
         <Switch>
           <Match when={select() === 0}>
@@ -87,7 +89,7 @@ const Example = () => {
       </Transition>
       <b>Group</b>
       <br />
-      <button
+      <Button
         onClick={() => {
           const list = numList(),
             idx = randomIndex();
@@ -95,8 +97,8 @@ const Example = () => {
         }}
       >
         Add
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={() => {
           const list = numList(),
             idx = randomIndex();
@@ -104,15 +106,15 @@ const Example = () => {
         }}
       >
         Remove
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={() => {
           const randomList = shuffle(numList().slice());
           setNumList(randomList);
         }}
       >
         Shuffle
-      </button>
+      </Button>
       <br />
       <TransitionGroup name="list-item">
         <For each={numList()}>{(r) => <span class="list-item">{r}</span>}</For>
