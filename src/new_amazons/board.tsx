@@ -31,7 +31,6 @@ export const Checkerboard: ParentComponent<{ fen: FEN; settings: any }> = (
       class="select-none grid"
       style={{
         width: board_size,
-        height: board_size,
         "grid-template-columns": `repeat(${cols}, 1fr)`,
       }}
     >
