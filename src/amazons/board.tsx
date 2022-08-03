@@ -30,6 +30,8 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   });
   const wQueens: Signal<TSquare>[] = [];
   const bQueens: Signal<TSquare>[] = [];
+  const [turnSig, setTurnSig] = createSignal("w");
+
   const [arrows, setArrows] = createSignal<TSquare[]>([]);
   const [selected, setSelected] = createSignal<TSquare | null>(null);
   const [canMove, setCanMove] = createSignal<TSquare[]>([]);
@@ -56,9 +58,11 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     if (fen === amazons.fen()) {
       updateMoves();
       updateSignals();
+      setTurnSig(amazons.turn());
       return;
     }
     amazons = Amazons(fen);
+    setTurnSig(amazons.turn());
     // size = amazons.size();
     // ({ rows, cols } = size);
     updateSignals();
@@ -147,7 +151,6 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   let wasSelected = false;
 
   const makeClickDownHandler = (sq: TSquare) => () => {
-    console.log(sq, queens()[amazons.turn()].includes(sq) && sq !== selected());
     if (ctx().gameover) return;
     disableUpClickHandler = false; // because drag starts after and ends before
     wasSelected = selected() === sq;
@@ -256,23 +259,23 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
               squareSize={squareSize()}
               team="w"
               active={
-                !amazons.shooting() && amazons.turn() === "w" && !ctx().gameover
+                !amazons.shooting() && turnSig() === "w" && !ctx().gameover
               }
             />
           )}
         </For>
-        <Index each={bQueens}>
+        <For each={bQueens}>
           {(sig) => (
             <Queen2
-              square={sig()[0]()}
+              square={sig[0]()}
               squareSize={squareSize()}
               team="b"
               active={
-                !amazons.shooting() && amazons.turn() === "b" && !ctx().gameover
+                !amazons.shooting() && turnSig() === "b" && !ctx().gameover
               }
             />
           )}
-        </Index>
+        </For>
       </div>
     </DragDropProvider>
   );
