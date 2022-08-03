@@ -2,7 +2,15 @@ import "./board.css";
 
 import { Square } from "./square";
 
-import { createEffect, createSignal, For, Index } from "solid-js";
+import {
+  Accessor,
+  createEffect,
+  createSignal,
+  For,
+  Index,
+  Setter,
+  Signal,
+} from "solid-js";
 import { Amazons, coords_to_square } from "amazons-game-engine";
 import { _ClientImpl } from "boardgame.io/dist/types/src/client/client";
 import { Square as TSquare } from "amazons-game-engine/dist/types";
@@ -20,6 +28,8 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     w: [],
     b: [],
   });
+  const wQueens: Signal<TSquare>[] = [];
+  const bQueens: Signal<TSquare>[] = [];
   const [arrows, setArrows] = createSignal<TSquare[]>([]);
   const [selected, setSelected] = createSignal<TSquare | null>(null);
   const [canMove, setCanMove] = createSignal<TSquare[]>([]);
@@ -31,6 +41,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   const [ctx, setCtx] = createSignal(initCtx);
 
   let amazons = Amazons(G().fen);
+  appendQueens();
   let size = amazons.size();
   let { rows, cols } = size;
   (window as any).amz = amazons;
@@ -48,13 +59,14 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
       return;
     }
     amazons = Amazons(fen);
-    size = amazons.size();
-    ({ rows, cols } = size);
+    // size = amazons.size();
+    // ({ rows, cols } = size);
     updateSignals();
     updateMoves();
     (window as any).amz = amazons;
   });
 
+  // boargame.io Sync
   props.client.subscribe((state) => {
     let { G: newG, ctx: newCtx } = state as any;
     setG(newG);
@@ -69,6 +81,16 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
       },
       size
     );
+  }
+
+  function appendQueens() {
+    let { w, b } = amazons.pieces();
+    for (let sq of w) {
+      wQueens.push(createSignal(sq));
+    }
+    for (let sq of b) {
+      bQueens.push(createSignal(sq));
+    }
   }
 
   function updateMoves() {
@@ -90,6 +112,17 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     props.client.moves.move([from, to]);
     setHighlight([from, to]);
     setSelected(from);
+    // update queens
+    for (let q of wQueens)
+      if (q[0]() === from) {
+        q[1](to);
+        return;
+      }
+    for (let q of bQueens)
+      if (q[0]() === from) {
+        q[1](to);
+        return;
+      }
   }
 
   function selectQueen(sq: TSquare) {
@@ -114,7 +147,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   let wasSelected = false;
 
   const makeClickDownHandler = (sq: TSquare) => () => {
-    console.log(sq);
+    console.log(sq, queens()[amazons.turn()].includes(sq) && sq !== selected());
     if (ctx().gameover) return;
     disableUpClickHandler = false; // because drag starts after and ends before
     wasSelected = selected() === sq;
@@ -192,7 +225,9 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
         }}
       >
         <Index each={Array.from(get_squares())}>
-          {(entry) => (
+          {(
+            entry // entry: Accessor<[`${string}${number}`, string]>
+          ) => (
             <Square
               name={entry()[0]}
               height={squareSize()}
@@ -214,26 +249,30 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
             />
           )}
         </Index>
-        <For each={queens()["w"]}>
-          {(sq) => (
+        <For each={wQueens}>
+          {(sig) => (
             <Queen2
-              square={sq}
+              square={sig[0]()}
               squareSize={squareSize()}
               team="w"
-              active={true}
+              active={
+                !amazons.shooting() && amazons.turn() === "w" && !ctx().gameover
+              }
             />
           )}
         </For>
-        <For each={queens()["b"]}>
-          {(sq) => (
+        <Index each={bQueens}>
+          {(sig) => (
             <Queen2
-              square={sq}
+              square={sig()[0]()}
               squareSize={squareSize()}
               team="b"
-              active={true}
+              active={
+                !amazons.shooting() && amazons.turn() === "b" && !ctx().gameover
+              }
             />
           )}
-        </For>
+        </Index>
       </div>
     </DragDropProvider>
   );
