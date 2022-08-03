@@ -7,11 +7,12 @@ import "../animation/crazy.css";
 let queen_id = 10; // TODO maybe move ID elsewhere
 export const Queen2 = (props: {
   team: string;
+  smooth: boolean;
   active: boolean;
   square: Square;
   squareSize: string;
 }) => {
-  console.log("creating queen");
+  console.log("creating queen 2!");
   const draggable = createDraggable(queen_id++, { square: props.square });
   return (
     <div
@@ -19,15 +20,15 @@ export const Queen2 = (props: {
         document.getElementById("square-" + props.square)?.$$mousedown()
       }
       onMouseUp={() => {
-        console.log("mouse up!");
         document.getElementById("square-" + props.square)?.$$mouseup();
       }}
-      class={`absolute z-10 smooth`}
+      class="absolute z-10"
       style={{
         width: props.squareSize,
         height: props.squareSize,
         transform: makeTransform(props.square),
       }}
+      classList={{ smooth: props.smooth }}
     >
       {/* overlay left behind*/}
       <div

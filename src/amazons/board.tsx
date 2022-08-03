@@ -150,10 +150,13 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   let disableUpClickHandler = true;
   let wasSelected = false;
 
+  const [smoothMotion, setSmoothMotion] = createSignal(true);
+
   const makeClickDownHandler = (sq: TSquare) => () => {
     if (ctx().gameover) return;
     disableUpClickHandler = false; // because drag starts after and ends before
     wasSelected = selected() === sq;
+    setSmoothMotion(true);
 
     if (amazons.shooting()) {
       if (canMove().includes(sq)) {
@@ -206,6 +209,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   };
 
   const onDragStart: DragEventHandler = ({ draggable }) => {
+    setSmoothMotion(false);
     selectQueen(draggable.data.square);
   };
 
@@ -215,6 +219,11 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
       sendMove(draggable.data.square, droppable.id as TSquare);
     }
   };
+
+  createEffect(() => {
+    let x = smoothMotion();
+    console.log("smooth changed");
+  });
 
   return (
     <DragDropProvider onDragEnd={onDragEnd} onDragStart={onDragStart}>
@@ -258,6 +267,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
               square={sig[0]()}
               squareSize={squareSize()}
               team="w"
+              smooth={smoothMotion()}
               active={
                 !amazons.shooting() && turnSig() === "w" && !ctx().gameover
               }
@@ -270,6 +280,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
               square={sig[0]()}
               squareSize={squareSize()}
               team="b"
+              smooth={smoothMotion()}
               active={
                 !amazons.shooting() && turnSig() === "b" && !ctx().gameover
               }
