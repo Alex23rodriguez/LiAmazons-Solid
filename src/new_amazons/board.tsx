@@ -3,11 +3,10 @@ import { FEN, Size, Square as TSquare } from "amazons-game-engine/dist/types";
 import { createSignal, ParentComponent, Signal, For, Index } from "solid-js";
 import { Arrow } from "./arrow";
 import { Queen } from "./queen";
+import { colorPalette } from "./settings";
 import { Square } from "./square";
 
-export const Checkerboard: ParentComponent<{ fen: FEN; settings: any }> = (
-  props
-) => {
+export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
   const amz = Amazons(props.fen);
   const size = amz.size();
   const { rows, cols } = size;
@@ -15,7 +14,8 @@ export const Checkerboard: ParentComponent<{ fen: FEN; settings: any }> = (
     index_to_square(i, size)
   );
 
-  const board_size = `calc(min(80vh, 80vw))`;
+  const board_size = "min(80vh, 80vw)";
+  const square_size = `calc(${board_size} / ${cols})`;
 
   const pieces: { [piece: string]: Signal<TSquare>[] } = {
     b: [],
@@ -40,15 +40,17 @@ export const Checkerboard: ParentComponent<{ fen: FEN; settings: any }> = (
     >
       {Object.entries(pieces).map(([piece, sig_array]) =>
         piece === "x" ? (
-          <Arrow />
+          <Arrow size={square_size} />
         ) : (
           <For each={sig_array}>
-            {(sig) => <Queen square={sig[0]()} team={piece} />}
+            {(sig) => (
+              <Queen square={sig[0]()} team={piece} size={square_size} />
+            )}
           </For>
         )
       )}
       {square_names.map((sq) => (
-        <Square name={sq} color={props.settings.color[amz.square_color(sq)]} />
+        <Square name={sq} color={colorPalette()[amz.square_color(sq)]} />
       ))}
     </div>
   );

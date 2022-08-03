@@ -1,9 +1,24 @@
 import { Square } from "amazons-game-engine/dist/types";
-import { Component } from "solid-js";
+import { Component, createEffect, createMemo, createSignal } from "solid-js";
+import { colorPalette, setColor } from "./settings";
 
+let queenCount = 1;
 export const Queen: Component<{
   square: Square;
   team: string;
-}> = () => {
-  return <div class="absolute w-10 h-10 bg-green-400 z-20" />;
+  size: string;
+}> = (props) => {
+  return (
+    <div
+      id={"queen" + queenCount++}
+      class="absolute z-20 grid place-items-center"
+      style={{ width: props.size, height: props.size }}
+    >
+      <div
+        class="absolute w-4/5 h-4/5 rounded-full border border-black"
+        style={{ "background-color": colorPalette()[props.team] }}
+      />
+      <div class="absolute w-3/5 h-3/5 rounded-full border border-black" />
+    </div>
+  );
 };

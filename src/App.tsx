@@ -7,10 +7,7 @@ import { DEFAULT_POSITIONS } from "amazons-game-engine";
 export const App = () => (
   <>
     <Singleplayer />
-    <Checkerboard
-      fen={DEFAULT_POSITIONS[6]}
-      settings={{ color: { light: "red", dark: "blue" } }}
-    />
+    <Checkerboard fen={DEFAULT_POSITIONS[6]} />
     {/* <Anim /> */}
   </>
 );
