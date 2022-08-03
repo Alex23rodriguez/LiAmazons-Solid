@@ -5,12 +5,12 @@ export const [colorPalette, setColorPalette] = createSignal<{
 }>(
   {
     light: "beige",
-    dark: "gray",
+    dark: "#16a34a",
     w: "white",
-    b: "red",
+    b: "slateblue",
     arrow: "black",
     light_h: "yellow",
-    dark_n: "yellow",
+    dark_h: "yellow",
   },
   { equals: false }
 );
