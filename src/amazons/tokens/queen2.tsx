@@ -1,7 +1,8 @@
 import { createDraggable, transformStyle } from "@thisbeyond/solid-dnd";
 import { square_to_coords } from "amazons-game-engine";
 import { Square } from "amazons-game-engine/dist/types";
-import "../animation/test.css";
+import { createSignal } from "solid-js";
+import "../animation/crazy.css";
 
 let queen_id = 10; // TODO maybe move ID elsewhere
 export const Queen2 = (props: {
@@ -10,10 +11,18 @@ export const Queen2 = (props: {
   square: Square;
   squareSize: string;
 }) => {
+  console.log("creating queen");
   const draggable = createDraggable(queen_id++, { square: props.square });
   return (
     <div
-      class="absolute z-10 "
+      onMouseDown={() =>
+        document.getElementById("square-" + props.square)?.$$mousedown()
+      }
+      onMouseUp={() => {
+        console.log("mouse up!");
+        document.getElementById("square-" + props.square)?.$$mouseup();
+      }}
+      class={`absolute z-10 smooth`}
       style={{
         width: props.squareSize,
         height: props.squareSize,
@@ -62,6 +71,8 @@ export const Queen2 = (props: {
 function makeTransform(sq: Square) {
   const { row, col } = square_to_coords(sq, { rows: 6, cols: 6 });
 
-  const ans = `translate(${col}00%, ${row}00%)`;
+  const ans = `translate3d(${col === 0 ? "0" : col + "00%"}, ${
+    row === 0 ? "0" : row + "00%"
+  }, 0)`;
   return ans;
 }

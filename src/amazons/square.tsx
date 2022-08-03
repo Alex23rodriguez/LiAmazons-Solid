@@ -23,6 +23,7 @@ export const Square = (props: {
 
   return (
     <div
+      id={"square-" + props.name}
       ref={droppable.ref}
       onMouseDown={props.onMouseDown}
       onMouseUp={props.onMouseUp}
@@ -38,7 +39,7 @@ export const Square = (props: {
           <Movable shooting={props.token![1] === "y"} />
         </Match>
       </Switch>
-      {/* {props.name} */}
+      {props.name}
     </div>
   );
 };
