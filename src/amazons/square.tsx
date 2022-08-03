@@ -1,7 +1,7 @@
 import "./square.css";
 import "./tokens/token.css";
 
-import { FakeQueen, Queen } from "./tokens/queen";
+import { Queen } from "./tokens/queen";
 import { Movable } from "./tokens/movable";
 import { Arrow } from "./tokens/arrow";
 import { Match, Switch } from "solid-js";

@@ -3,9 +3,8 @@ import Anim from "./amazons/animation/index";
 
 export const App = () => (
   <>
-    {" "}
     <Singleplayer />
-    <Anim />
+    {/* <Anim /> */}
   </>
 );
 

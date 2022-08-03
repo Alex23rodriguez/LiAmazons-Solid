@@ -220,11 +220,6 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     }
   };
 
-  createEffect(() => {
-    let x = smoothMotion();
-    console.log("smooth changed");
-  });
-
   return (
     <DragDropProvider onDragEnd={onDragEnd} onDragStart={onDragStart}>
       <DragDropSensors />
