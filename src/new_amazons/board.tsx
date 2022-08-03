@@ -1,6 +1,8 @@
 import { Amazons, coords_to_square } from "amazons-game-engine";
 import { FEN, Size, Square as TSquare } from "amazons-game-engine/dist/types";
 import { createSignal, ParentComponent, Signal, For, Index } from "solid-js";
+import { Arrow } from "./arrow";
+import { Queen } from "./queen";
 import { Square } from "./square";
 
 export const Checkerboard: ParentComponent<{ fen: FEN; settings: any }> = (
@@ -21,6 +23,8 @@ export const Checkerboard: ParentComponent<{ fen: FEN; settings: any }> = (
     x: [],
   };
 
+  (window as any).pieces = pieces;
+
   for (let [piece, squares] of Object.entries(amz.pieces())) {
     for (let sq of squares) pieces[piece].push(createSignal(sq));
   }
@@ -34,6 +38,15 @@ export const Checkerboard: ParentComponent<{ fen: FEN; settings: any }> = (
         "grid-template-columns": `repeat(${cols}, 1fr)`,
       }}
     >
+      {Object.entries(pieces).map(([piece, sig_array]) =>
+        piece === "x" ? (
+          <Arrow />
+        ) : (
+          <For each={sig_array}>
+            {(sig) => <Queen square={sig[0]()} team={piece} />}
+          </For>
+        )
+      )}
       {square_names.map((sq) => (
         <Square name={sq} color={props.settings.color[amz.square_color(sq)]} />
       ))}
