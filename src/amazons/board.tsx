@@ -2,7 +2,7 @@ import "./board.css";
 
 import { Square } from "./square";
 
-import { createEffect, createSignal, Index } from "solid-js";
+import { createEffect, createSignal, For, Index } from "solid-js";
 import { Amazons, coords_to_square } from "amazons-game-engine";
 import { _ClientImpl } from "boardgame.io/dist/types/src/client/client";
 import { Square as TSquare } from "amazons-game-engine/dist/types";
@@ -11,6 +11,8 @@ import {
   DragDropSensors,
   DragEventHandler,
 } from "@thisbeyond/solid-dnd";
+import { Queen } from "./tokens/queen";
+import { Queen2 } from "./tokens/queen2";
 
 export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   // state
@@ -32,6 +34,11 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   let size = amazons.size();
   let { rows, cols } = size;
   (window as any).amz = amazons;
+
+  // window size
+  const [squareSize, setSquareSize] = createSignal(
+    `calc(min(80vw, 80vh) / ${cols})`
+  );
 
   createEffect(() => {
     let fen = G().fen;
@@ -107,6 +114,7 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
   let wasSelected = false;
 
   const makeClickDownHandler = (sq: TSquare) => () => {
+    console.log(sq);
     if (ctx().gameover) return;
     disableUpClickHandler = false; // because drag starts after and ends before
     wasSelected = selected() === sq;
@@ -145,8 +153,6 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
     }
   };
 
-  let square_height = `calc(min(80vw, 80vh) / ${cols})`;
-
   const squares_map = new Map(
     Array.from({ length: cols * rows }, (_, i) => [index_to_square(i), ""])
   );
@@ -182,14 +188,14 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
         class="unselectable"
         style={{
           display: "grid",
-          "grid-template-columns": `repeat(${cols}, ${square_height})`,
+          "grid-template-columns": `repeat(${cols}, ${squareSize()})`,
         }}
       >
         <Index each={Array.from(get_squares())}>
           {(entry) => (
             <Square
               name={entry()[0]}
-              height={square_height}
+              height={squareSize()}
               color={
                 highlight().includes(entry()[0])
                   ? "bg-yellow-300"
@@ -208,6 +214,26 @@ export const AmazonsBoard = (props: { client: _ClientImpl }) => {
             />
           )}
         </Index>
+        <For each={queens()["w"]}>
+          {(sq) => (
+            <Queen2
+              square={sq}
+              squareSize={squareSize()}
+              team="w"
+              active={true}
+            />
+          )}
+        </For>
+        <For each={queens()["b"]}>
+          {(sq) => (
+            <Queen2
+              square={sq}
+              squareSize={squareSize()}
+              team="b"
+              active={true}
+            />
+          )}
+        </For>
       </div>
     </DragDropProvider>
   );
