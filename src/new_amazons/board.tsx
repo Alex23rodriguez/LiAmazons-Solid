@@ -40,7 +40,9 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
     >
       {Object.entries(pieces).map(([piece, sig_array]) =>
         piece === "x" ? (
-          <Arrow size={square_size} />
+          <For each={sig_array}>
+            {(sig) => <Arrow size={square_size} square={sig[0]()} />}
+          </For>
         ) : (
           <For each={sig_array}>
             {(sig) => (
