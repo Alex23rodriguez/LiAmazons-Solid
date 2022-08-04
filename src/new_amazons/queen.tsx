@@ -8,11 +8,11 @@ export const Queen: Component<{
   square: TSquare;
   team: string;
   size: string;
-  onClick: (sq: TSquare) => void;
+  onClick: (sq: TSquare, token: string) => void;
 }> = (props) => {
   return (
     <div
-      onClick={() => props.onClick(props.square)}
+      onClick={() => props.onClick(props.square, props.team)}
       id={"queen" + queenCount++}
       class="absolute z-20 grid place-items-center"
       style={{

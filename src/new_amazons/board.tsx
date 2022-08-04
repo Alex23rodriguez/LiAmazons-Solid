@@ -30,8 +30,8 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
   }
 
   const [selected, setSelected] = createSignal<TSquare | null>(null);
-  const onClick = (sq: TSquare) => {
-    console.log(sq);
+  const onClick = (sq: TSquare, token: string) => {
+    console.log(sq, token);
     setSelected(sq);
   };
 
@@ -65,6 +65,7 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
       {square_names.map((sq) => (
         <Square
           canMove={sq === "b1"}
+          shooting={true}
           square={sq}
           color={colorPalette()[amz.square_color(sq)]}
           onClick={onClick}

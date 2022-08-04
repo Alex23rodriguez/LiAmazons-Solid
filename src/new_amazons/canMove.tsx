@@ -3,7 +3,6 @@ import { Component } from "solid-js";
 import { colorPalette } from "./settings";
 export const CanMove: Component<{
   shooting: boolean;
-  onClick: (sq: TSquare) => void;
 }> = (props) => {
   return (
     <div class="absolute grid place-items-center w-full h-full">
