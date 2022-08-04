@@ -8,7 +8,10 @@ import { Square } from "./square";
 
 const [shooting, setShooting] = createSignal<boolean>(false);
 const [turn, setTurn] = createSignal<string>("w");
-const [selected, setSelected] = createSignal<TSquare | null>(null);
+const [selected, setSelected] = createSignal<[TSquare | null, string]>([
+  null,
+  "",
+]);
 export { shooting, turn, selected };
 
 export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
@@ -34,9 +37,27 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
     for (let sq of squares) pieces[piece].push(createSignal(sq));
   }
 
+  function movePiece(from: TSquare, to: TSquare, piece: string) {
+    for (let sig of pieces[piece]) {
+      if (sig[0]() === from) {
+        sig[1](to);
+        console.log(`moved ${piece} from ${from} to ${to}`);
+        return;
+      }
+    }
+    console.error("piece not found");
+  }
+  (window as any).movePiece = movePiece;
+
   const onClick = (sq: TSquare, token: string) => {
     console.log(sq, token);
-    setSelected(sq);
+    if (selected()[0] && token === "") {
+      movePiece(selected()[0]!, sq, selected()[1]);
+      setSelected([null, ""]);
+    }
+    if (token === "w" || token === "b") {
+      setSelected([sq, token]);
+    }
   };
 
   return (

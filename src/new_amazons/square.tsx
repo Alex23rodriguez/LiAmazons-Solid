@@ -13,7 +13,7 @@ export const Square: ParentComponent<{
   console.log("creating square");
   const color = () => {
     let key = props.color;
-    if (selected() === props.square) key += "_h";
+    if (selected()[0] === props.square) key += "_h";
     return colorPalette()[key];
   };
   return (

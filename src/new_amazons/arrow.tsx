@@ -7,7 +7,7 @@ let arrowCount = 1;
 export const Arrow: Component<{ size: string; square: Square }> = (props) => (
   <div
     id={"arrow" + arrowCount++}
-    class="absolute z-10 grid place-items-center"
+    class="absolute z-10 grid place-items-center smooth"
     style={{
       width: props.size,
       height: props.size,
