@@ -10,6 +10,7 @@ export const Queen: Component<{
   size: string;
   onClick: (sq: TSquare, token: string) => void;
 }> = (props) => {
+  console.log("creating queen");
   return (
     <div
       onClick={() => props.onClick(props.square, props.team)}

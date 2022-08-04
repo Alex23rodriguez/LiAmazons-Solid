@@ -6,6 +6,11 @@ import { Queen } from "./queen";
 import { colorPalette } from "./settings";
 import { Square } from "./square";
 
+const [shooting, setShooting] = createSignal<boolean>(false);
+const [turn, setTurn] = createSignal<string>("w");
+const [selected, setSelected] = createSignal<TSquare | null>(null);
+export { shooting, turn, selected };
+
 export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
   const amz = Amazons(props.fen);
   const size = amz.size();
@@ -29,7 +34,6 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
     for (let sq of squares) pieces[piece].push(createSignal(sq));
   }
 
-  const [selected, setSelected] = createSignal<TSquare | null>(null);
   const onClick = (sq: TSquare, token: string) => {
     console.log(sq, token);
     setSelected(sq);
@@ -65,9 +69,8 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
       {square_names.map((sq) => (
         <Square
           canMove={sq === "b1"}
-          shooting={true}
           square={sq}
-          color={colorPalette()[amz.square_color(sq)]}
+          color={amz.square_color(sq)}
           onClick={onClick}
         />
       ))}

@@ -1,9 +1,8 @@
 import { Square as TSquare } from "amazons-game-engine/dist/types";
 import { Component } from "solid-js";
+import { shooting } from "./board";
 import { colorPalette } from "./settings";
-export const CanMove: Component<{
-  shooting: boolean;
-}> = (props) => {
+export const CanMove: Component = () => {
   return (
     <div class="absolute grid place-items-center w-full h-full">
       <div
@@ -11,7 +10,7 @@ export const CanMove: Component<{
         style={{
           opacity: 0.5,
           "background-color":
-            colorPalette()[props.shooting ? "canMoveShooting" : "canMove"],
+            colorPalette()[shooting() ? "canMoveShooting" : "canMove"],
         }}
       ></div>
     </div>
