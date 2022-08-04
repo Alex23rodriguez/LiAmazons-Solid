@@ -1,9 +1,18 @@
 import { Square as TSquare } from "amazons-game-engine/dist/types";
-import { Component } from "solid-js";
+import { ParentComponent, Show } from "solid-js";
+import { CanMove } from "./canMove";
 
-export const Square: Component<{ name: TSquare; color: string }> = (props) => (
+export const Square: ParentComponent<{
+  square: TSquare;
+  color: string;
+  canMove: boolean;
+  onClick: (sq: TSquare) => void;
+}> = (props) => (
   <div
-    class="w-full"
-    style={{ "padding-top": "100%", "background-color": props.color }}
-  />
+    id={props.square}
+    class="relative w-full"
+    style={{ "padding-bottom": "100%", "background-color": props.color }}
+  >
+    <Show when={props.canMove}>{<CanMove onClick={props.onClick} />}</Show>
+  </div>
 );

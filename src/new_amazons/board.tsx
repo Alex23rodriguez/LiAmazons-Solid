@@ -29,6 +29,12 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
     for (let sq of squares) pieces[piece].push(createSignal(sq));
   }
 
+  const [selected, setSelected] = createSignal<TSquare | null>(null);
+  const onClick = (sq: TSquare) => {
+    console.log(sq);
+    setSelected(sq);
+  };
+
   return (
     <div
       id="board"
@@ -46,13 +52,23 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
         ) : (
           <For each={sig_array}>
             {(sig) => (
-              <Queen square={sig[0]()} team={piece} size={square_size} />
+              <Queen
+                square={sig[0]()}
+                team={piece}
+                size={square_size}
+                onClick={onClick}
+              />
             )}
           </For>
         )
       )}
       {square_names.map((sq) => (
-        <Square name={sq} color={colorPalette()[amz.square_color(sq)]} />
+        <Square
+          canMove={sq === "b1"}
+          square={sq}
+          color={colorPalette()[amz.square_color(sq)]}
+          onClick={onClick}
+        />
       ))}
     </div>
   );
