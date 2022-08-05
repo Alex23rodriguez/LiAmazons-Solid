@@ -1,34 +1,9 @@
-## Usage
+## LiAmazons
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+LiAmazons is an open-source, online platform inspired by lichess (Libre Chess), but to play the [Game of the Amazons](https://en.wikipedia.org/wiki/Game_of_the_Amazons). The platform is made to be free to play, with no additional paywalled features.
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+This website was built using the frontend [Solid js](https://www.solidjs.com) framework, which enables, as the website describes it, a "simple and performant reactivity for building user interfaces." This framework is similar to React, currently the most popular frontend framework worldwide, as it is powered by JSX, but under the hood ditches the virtual DOM to unlock better peforming websites and an easier to reason about developer experience.
 
-```bash
-$ npm install # or pnpm install or yarn install
-```
+The logic of the game itself is handled by the [amazons-game-engine](https://www.npmjs.com/package/amazons-game-engine) npm package, which is also open source, while [boardgame.io](https://boardgame.io) is used to handle the multiplayer aspect of game.
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm dev` or `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-
-### `npm run build`
-
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
+This project is under active developent. A version accesible to everyone is soon to be available.
