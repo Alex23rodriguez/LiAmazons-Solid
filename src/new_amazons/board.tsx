@@ -1,9 +1,9 @@
 import { Amazons, coords_to_square } from "amazons-game-engine";
 import { FEN, Size, Square as TSquare } from "amazons-game-engine/dist/types";
-import { createSignal, ParentComponent, Signal, For, Index } from "solid-js";
+import { createSignal, ParentComponent, Signal, For } from "solid-js";
 import { Arrow } from "./arrow";
+import { ArrowAnim } from "./arrow_anim";
 import { Queen } from "./queen";
-import { colorPalette } from "./settings";
 import { Square } from "./square";
 
 const [shooting, setShooting] = createSignal<boolean>(false);
@@ -12,6 +12,13 @@ const [selected, setSelected] = createSignal<[TSquare | null, string]>([
   null,
   "",
 ]);
+export const [animatedArr, setAnimatedArr] = createSignal<{
+  square: TSquare;
+  hidden: boolean;
+}>({ square: "a1", hidden: true });
+(window as any).anim = animatedArr;
+(window as any).setAnim = setAnimatedArr;
+
 export { shooting, turn, selected };
 
 export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
@@ -32,6 +39,7 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
   };
 
   (window as any).pieces = pieces;
+  (window as any).selected = selected;
 
   for (let [piece, squares] of Object.entries(amz.pieces())) {
     for (let sq of squares) pieces[piece].push(createSignal(sq));
@@ -69,6 +77,7 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
         "grid-template-columns": `repeat(${cols}, 1fr)`,
       }}
     >
+      <ArrowAnim size={square_size} />
       {Object.entries(pieces).map(([piece, sig_array]) =>
         piece === "x" ? (
           <For each={sig_array}>
