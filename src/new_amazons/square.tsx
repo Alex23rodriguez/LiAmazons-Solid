@@ -1,5 +1,6 @@
 import { Square as TSquare } from "amazons-game-engine/dist/types";
-import { ParentComponent, Show } from "solid-js";
+import { Match, ParentComponent, Show, Switch } from "solid-js";
+import { Arrow } from "./arrow";
 import { selected } from "./board";
 import { CanMove } from "./canMove";
 import { colorPalette } from "./settings";
@@ -7,7 +8,7 @@ import { colorPalette } from "./settings";
 export const Square: ParentComponent<{
   square: TSquare;
   color: "light" | "dark";
-  canMove: boolean;
+  token: string;
   onClick: (sq: TSquare, token: string) => void;
 }> = (props) => {
   console.log("creating square");
@@ -21,9 +22,16 @@ export const Square: ParentComponent<{
       id={props.square}
       class="relative w-full"
       style={{ "padding-bottom": "100%", "background-color": color() }}
-      onClick={() => props.onClick(props.square, props.canMove ? "m" : "")}
+      onClick={() => props.onClick(props.square, props.token)}
     >
-      <Show when={props.canMove}>{<CanMove />}</Show>
+      <Switch>
+        <Match when={props.token === "m"}>
+          <CanMove />
+        </Match>
+        <Match when={props.token === "x"}>
+          <Arrow />
+        </Match>
+      </Switch>
     </div>
   );
 };

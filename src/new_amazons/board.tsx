@@ -80,11 +80,7 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
       <ArrowAnim size={square_size} />
       {Object.entries(pieces).map(([piece, sig_array]) =>
         piece === "x" ? (
-          <For each={sig_array}>
-            {(sig) => (
-              <Arrow size={square_size} square={sig[0]()} onClick={onClick} />
-            )}
-          </For>
+          <></>
         ) : (
           <For each={sig_array}>
             {(sig) => (
@@ -100,7 +96,7 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
       )}
       {square_names.map((sq) => (
         <Square
-          canMove={sq === "b1"}
+          token={sq === "b1" ? "x" : sq === "b2" ? "m" : ""}
           square={sq}
           color={amz.square_color(sq)}
           onClick={onClick}
