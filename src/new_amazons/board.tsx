@@ -1,7 +1,6 @@
 import { Amazons, coords_to_square } from "amazons-game-engine";
 import { FEN, Size, Square as TSquare } from "amazons-game-engine/dist/types";
 import { createSignal, ParentComponent, Signal, For } from "solid-js";
-import { Arrow } from "./arrow";
 import { ArrowAnim } from "./arrow_anim";
 import { Queen } from "./queen";
 import { Square } from "./square";
@@ -15,7 +14,7 @@ const [selected, setSelected] = createSignal<[TSquare | null, string]>([
 export const [animatedArr, setAnimatedArr] = createSignal<{
   square: TSquare;
   hidden: boolean;
-}>({ square: "a1", hidden: true });
+}>({ square: "a1", hidden: false });
 (window as any).anim = animatedArr;
 (window as any).setAnim = setAnimatedArr;
 
@@ -65,6 +64,8 @@ export const Checkerboard: ParentComponent<{ fen: FEN }> = (props) => {
     }
     if (token === "w" || token === "b") {
       setSelected([sq, token]);
+    } else if (token === "") {
+      setAnimatedArr({ hidden: false, square: sq });
     }
   };
 
